@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"e674941a0eb49e8a","type":"text","text":"adasd","x":-100,"y":-220,"width":250,"height":60},
+		{"id":"a27e61bb5be34a26","type":"text","text":"","x":-60,"y":80,"width":250,"height":60},
+		{"id":"c49915014c48347a","x":-250,"y":-420,"width":400,"height":400,"type":"file","file":"asdas.md"}
+	],
+	"edges":[]
+}
