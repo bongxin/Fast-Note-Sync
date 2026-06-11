@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一人公司架构图</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; background: #020617; min-height: 100vh; padding: 2rem; color: white; }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab { padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #1e293b; background: rgba(15,23,42,0.5); color: #94a3b8; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .tab.active { background: rgba(34,211,238,0.15); border-color: #22d3ee; color: #22d3ee; }
+
+    .diagram-panel { display: none; }
+    .diagram-panel.active { display: block; }
+
+    .diagram-container { background: rgba(15,23,42,0.5); border-radius: 1rem; border: 1px solid #1e293b; padding: 1.5rem; overflow-x: auto; }
+    svg { width: 100%; min-width: 900px; display: block; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: rgba(15,23,42,0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem; }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card-dot.rose { background: #fb7185; }
+    .card-dot.orange { background: #fb923c; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-row">
+      <div class="pulse-dot"></div>
+      <h1>一人公司技术架构图</h1>
+    </div>
+    <p class="subtitle">基于芋道源码 + AI Coding 全栈工作流 · 2026</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPanel('network')">网络架构</button>
+    <button class="tab" onclick="showPanel('tech')">技术架构</button>
+    <button class="tab" onclick="showPanel('workflow')">开发流程</button>
+    <button class="tab" onclick="showPanel('asset')">资产清单</button>
+  </div>
+
+  <!-- ===================== 网络架构 ===================== -->
+  <div class="diagram-panel active" id="panel-network">
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 600">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+
+        <!-- Internet -->
+        <rect x="400" y="20" width="200" height="44" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="500" y="38" fill="white" font-size="11" font-weight="600" text-anchor="middle">互联网</text>
+        <text x="500" y="52" fill="#94a3b8" font-size="9" text-anchor="middle">Internet</text>
+
+        <!-- Mac mini boundary -->
+        <rect x="120" y="80" width="760" height="500" rx="12" fill="rgba(251,191,36,0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="134" y="98" fill="#fbbf24" font-size="10" font-weight="600">Mac Mini (本地开发环境)</text>
+
+        <!-- Docker Network -->
+        <rect x="140" y="115" width="720" height="450" rx="8" fill="transparent" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="154" y="131" fill="#22d3ee" font-size="9">docker0 bridge (172.17.0.0/16)</text>
+
+        <!-- Nginx -->
+        <rect x="170" y="160" width="130" height="60" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="235" y="182" fill="white" font-size="11" font-weight="600" text-anchor="middle">Nginx</text>
+        <text x="235" y="198" fill="#94a3b8" font-size="9" text-anchor="middle">:8080 → /prod-api/</text>
+
+        <!-- vben3 Frontend -->
+        <rect x="340" y="160" width="140" height="60" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="410" y="182" fill="white" font-size="11" font-weight="600" text-anchor="middle">yudao-admin</text>
+        <text x="410" y="198" fill="#94a3b8" font-size="9" text-anchor="middle">vben3 :8080</text>
+
+        <!-- vben5 Frontend (planned) -->
+        <rect x="340" y="240" width="140" height="60" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="410" y="262" fill="white" font-size="11" font-weight="600" text-anchor="middle">yudao-admin-vben</text>
+        <text x="410" y="278" fill="#94a3b8" font-size="9" text-anchor="middle">vben5 antd :8081</text>
+
+        <!-- yudao-server -->
+        <rect x="520" y="160" width="140" height="60" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="590" y="182" fill="white" font-size="11" font-weight="600" text-anchor="middle">yudao-server</text>
+        <text x="590" y="198" fill="#94a3b8" font-size="9" text-anchor="middle">Java :48080</text>
+
+        <!-- yudao-redis -->
+        <rect x="700" y="160" width="130" height="60" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="765" y="182" fill="white" font-size="11" font-weight="600" text-anchor="middle">yudao-redis</text>
+        <text x="765" y="198" fill="#94a3b8" font-size="9" text-anchor="middle">Redis :6379</text>
+
+        <!-- yudao-mysql -->
+        <rect x="700" y="240" width="130" height="60" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="765" y="262" fill="white" font-size="11" font-weight="600" text-anchor="middle">yudao-mysql</text>
+        <text x="765" y="278" fill="#94a3b8" font-size="9" text-anchor="middle">MySQL :3306</text>
+
+        <!-- GitHub -->
+        <rect x="520" y="360" width="140" height="60" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="590" y="382" fill="white" font-size="11" font-weight="600" text-anchor="middle">GitHub</text>
+        <text x="590" y="398" fill="#94a3b8" font-size="9" text-anchor="middle">bongxin/ repos</text>
+
+        <!-- AI Agents -->
+        <rect x="170" y="360" width="300" height="180" rx="8" fill="rgba(8,51,68,0.3)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="182" y="378" fill="#22d3ee" font-size="9">AI Agent 工作区</text>
+
+        <rect x="185" y="390" width="120" height="44" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="245" y="407" fill="white" font-size="10" font-weight="600" text-anchor="middle">Cursor/Windsurf</text>
+        <text x="245" y="421" fill="#94a3b8" font-size="8" text-anchor="middle">核心开发中枢</text>
+
+        <rect x="320" y="390" width="120" height="44" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="380" y="407" fill="white" font-size="10" font-weight="600" text-anchor="middle">Claude</text>
+        <text x="380" y="421" fill="#94a3b8" font-size="8" text-anchor="middle">架构设计/重构</text>
+
+        <rect x="185" y="448" width="120" height="44" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="245" y="465" fill="white" font-size="10" font-weight="600" text-anchor="middle">Hermes Agent</text>
+        <text x="245" y="479" fill="#94a3b8" font-size="8" text-anchor="middle">自动化任务编排</text>
+
+        <rect x="320" y="448" width="120" height="44" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="380" y="465" fill="white" font-size="10" font-weight="600" text-anchor="middle">Notion AI</text>
+        <text x="380" y="479" fill="#94a3b8" font-size="8" text-anchor="middle">PRD/知识库</text>
+
+        <!-- Arrows -->
+        <line x1="500" y1="42" x2="500" y2="158" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+        <text x="514" y="105" fill="#94a3b8" font-size="8">HTTPS</text>
+
+        <line x1="300" y1="190" x2="338" y2="190" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="319" y="184" fill="#94a3b8" font-size="8">/prod-api/</text>
+
+        <line x1="480" y1="190" x2="518" y2="190" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="499" y="184" fill="#94a3b8" font-size="8">proxy</text>
+
+        <line x1="590" y1="220" x2="590" y2="238" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <line x1="660" y1="190" x2="698" y2="190" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="684" y="184" fill="#a78bfa" font-size="8">JDBC</text>
+
+        <line x1="590" y1="300" x2="590" y2="358" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="590" y1="358" x2="518" y2="390" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrowhead)"/>
+        <text x="610" y="332" fill="#94a3b8" font-size="8">git push</text>
+
+        <line x1="380" y1="300" x2="380" y2="358" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="380" y1="358" x2="245" y2="390" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrowhead)"/>
+        <text x="312" y="332" fill="#22d3ee" font-size="8">API调用</text>
+
+        <!-- Legend -->
+        <text x="700" y="378" fill="white" font-size="9" font-weight="600">图例</text>
+        <rect x="700" y="390" width="14" height="9" rx="2" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="720" y="398" fill="#94a3b8" font-size="8">前端</text>
+        <rect x="700" y="405" width="14" height="9" rx="2" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="720" y="413" fill="#94a3b8" font-size="8">后端</text>
+        <rect x="700" y="420" width="14" height="9" rx="2" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="720" y="428" fill="#94a3b8" font-size="8">数据库</text>
+        <rect x="700" y="435" width="14" height="9" rx="2" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="720" y="443" fill="#94a3b8" font-size="8">基础设施</text>
+        <rect x="700" y="450" width="14" height="9" rx="2" fill="transparent" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="720" y="458" fill="#94a3b8" font-size="8">内部调用</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===================== 技术架构 ===================== -->
+  <div class="diagram-panel" id="panel-tech">
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 620">
+        <defs>
+          <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+          <pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid2)"/>
+
+        <!-- Browser -->
+        <rect x="30" y="80" width="120" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="90" y="100" fill="white" font-size="11" font-weight="600" text-anchor="middle">浏览器</text>
+        <text x="90" y="116" fill="#94a3b8" font-size="9" text-anchor="middle">Chrome / Safari</text>
+
+        <!-- CDN -->
+        <rect x="200" y="80" width="100" height="50" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="250" y="100" fill="white" font-size="11" font-weight="600" text-anchor="middle">CDN</text>
+        <text x="250" y="116" fill="#94a3b8" font-size="9" text-anchor="middle">Vercel / 腾讯云</text>
+
+        <!-- Nginx LB -->
+        <rect x="350" y="80" width="120" height="50" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="410" y="100" fill="white" font-size="11" font-weight="600" text-anchor="middle">Nginx</text>
+        <text x="410" y="116" fill="#94a3b8" font-size="9" text-anchor="middle">反向代理 + SSL</text>
+
+        <!-- Frontend Layer -->
+        <rect x="30" y="170" width="440" height="130" rx="8" fill="rgba(8,51,68,0.15)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="42" y="186" fill="#22d3ee" font-size="9">前端层</text>
+
+        <rect x="50" y="200" width="120" height="80" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="110" y="224" fill="white" font-size="10" font-weight="600" text-anchor="middle">yudao-admin</text>
+        <text x="110" y="240" fill="#94a3b8" font-size="8" text-anchor="middle">Vue3 + Vben3</text>
+        <text x="110" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Element-Plus</text>
+        <text x="110" y="268" fill="#22d3ee" font-size="7" text-anchor="middle">:8080</text>
+
+        <rect x="190" y="200" width="120" height="80" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="250" y="224" fill="white" font-size="10" font-weight="600" text-anchor="middle">yudao-admin-vben</text>
+        <text x="250" y="240" fill="#94a3b8" font-size="8" text-anchor="middle">Vue3 + Vben5</text>
+        <text x="250" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Ant Design</text>
+        <text x="250" y="268" fill="#22d3ee" font-size="7" text-anchor="middle">:8081 (规划)</text>
+
+        <rect x="330" y="200" width="120" height="80" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="390" y="224" fill="white" font-size="10" font-weight="600" text-anchor="middle">移动端</text>
+        <text x="390" y="240" fill="#94a3b8" font-size="8" text-anchor="middle">UniApp</text>
+        <text x="390" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">审批 / 移动端适配</text>
+        <text x="390" y="268" fill="#22d3ee" font-size="7" text-anchor="middle">H5 / App</text>
+
+        <!-- API Gateway -->
+        <rect x="520" y="80" width="120" height="50" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="580" y="100" fill="white" font-size="11" font-weight="600" text-anchor="middle">API Gateway</text>
+        <text x="580" y="116" fill="#94a3b8" font-size="9" text-anchor="middle">/admin-api/</text>
+
+        <!-- Backend Layer -->
+        <rect x="30" y="330" width="440" height="170" rx="8" fill="rgba(6,78,59,0.15)" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="42" y="346" fill="#34d399" font-size="9">后端层 (Spring Boot)</text>
+
+        <rect x="50" y="360" width="120" height="120" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="110" y="384" fill="white" font-size="10" font-weight="600" text-anchor="middle">System</text>
+        <text x="110" y="400" fill="#94a3b8" font-size="8" text-anchor="middle">• 用户管理</text>
+        <text x="110" y="414" fill="#94a3b8" font-size="8" text-anchor="middle">• 菜单权限</text>
+        <text x="110" y="428" fill="#94a3b8" font-size="8" text-anchor="middle">• 角色权限</text>
+        <text x="110" y="442" fill="#94a3b8" font-size="8" text-anchor="middle">• 通知管理</text>
+        <text x="110" y="468" fill="#34d399" font-size="7" text-anchor="middle">:48080</text>
+
+        <rect x="190" y="360" width="120" height="120" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="250" y="384" fill="white" font-size="10" font-weight="600" text-anchor="middle"> infra</text>
+        <text x="250" y="400" fill="#94a3b8" font-size="8" text-anchor="middle">• API错误日志</text>
+        <text x="250" y="414" fill="#94a3b8" font-size="8" text-anchor="middle">• 文件存储</text>
+        <text x="250" y="428" fill="#94a3b8" font-size="8" text-anchor="middle">• 配置管理</text>
+        <text x="250" y="442" fill="#94a3b8" font-size="8" text-anchor="middle">• 定时任务</text>
+        <text x="250" y="468" fill="#34d399" font-size="7" text-anchor="middle">BPM</text>
+
+        <rect x="330" y="360" width="120" height="120" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="390" y="384" fill="white" font-size="10" font-weight="600" text-anchor="middle"> Flowable</text>
+        <text x="390" y="400" fill="#94a3b8" font-size="8" text-anchor="middle">• 流程定义</text>
+        <text x="390" y="414" fill="#94a3b8" font-size="8" text-anchor="middle">• 发起/审批</text>
+        <text x="390" y="428" fill="#94a3b8" font-size="8" text-anchor="middle">• 加签/转交</text>
+        <text x="390" y="442" fill="#94a3b8" font-size="8" text-anchor="middle">• 移动端回调</text>
+        <text x="390" y="468" fill="#34d399" font-size="7" text-anchor="middle">工作流引擎</text>
+
+        <!-- Data Layer -->
+        <rect x="520" y="330" width="200" height="170" rx="8" fill="rgba(76,29,149,0.15)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="532" y="346" fill="#a78bfa" font-size="9">数据层</text>
+
+        <rect x="540" y="360" width="160" height="60" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="620" y="384" fill="white" font-size="11" font-weight="600" text-anchor="middle">MySQL</text>
+        <text x="620" y="400" fill="#94a3b8" font-size="9" text-anchor="middle">ruoyi-vue-pro :3306</text>
+        <text x="620" y="412" fill="#a78bfa" font-size="8" text-anchor="middle">InnoDB / 事务</text>
+
+        <rect x="540" y="435" width="160" height="55" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="620" y="458" fill="white" font-size="11" font-weight="600" text-anchor="middle">Redis</text>
+        <text x="620" y="474" fill="#94a3b8" font-size="9" text-anchor="middle">Session / 缓存 :6379</text>
+
+        <!-- Arrows -->
+        <line x1="150" y1="105" x2="198" y2="105" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="300" y1="105" x2="348" y2="105" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="410" y1="130" x2="410" y2="168" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="470" y1="105" x2="518" y2="105" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+
+        <line x1="170" y1="230" x2="188" y2="230" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="310" y1="230" x2="328" y2="230" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="450" y1="240" x2="518" y2="240" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <text x="484" y="234" fill="#22d3ee" font-size="8">API</text>
+
+        <line x1="580" y1="130" x2="580" y2="168" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="470" y1="300" x2="470" y2="328" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="110" y1="300" x2="110" y2="328" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="250" y1="300" x2="250" y2="328" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="390" y1="300" x2="390" y2="328" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <text x="490" y="314" fill="#34d399" font-size="8">JDBC</text>
+
+        <line x1="540" y1="420" x2="540" y2="433" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+        <line x1="700" y1="395" x2="702" y2="395" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead2)"/>
+
+        <!-- Legend -->
+        <text x="760" y="80" fill="white" font-size="9" font-weight="600">图例</text>
+        <rect x="760" y="92" width="14" height="9" rx="2" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="780" y="100" fill="#94a3b8" font-size="8">前端</text>
+        <rect x="760" y="107" width="14" height="9" rx="2" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="780" y="115" fill="#94a3b8" font-size="8">后端</text>
+        <rect x="760" y="122" width="14" height="9" rx="2" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="780" y="130" fill="#94a3b8" font-size="8">数据库</text>
+        <rect x="760" y="137" width="14" height="9" rx="2" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="780" y="145" fill="#94a3b8" font-size="8">基础设施</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===================== 开发流程 ===================== -->
+  <div class="diagram-panel" id="panel-workflow">
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 580">
+        <defs>
+          <marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+          <pattern id="grid3" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid3)"/>
+
+        <!-- Phase labels -->
+        <text x="40" y="60" fill="#fbbf24" font-size="11" font-weight="700">Phase 1: 需求</text>
+        <text x="270" y="60" fill="#22d3ee" font-size="11" font-weight="700">Phase 2: 架构</text>
+        <text x="500" y="60" fill="#34d399" font-size="11" font-weight="700">Phase 3: 实现</text>
+        <text x="730" y="60" fill="#a78bfa" font-size="11" font-weight="700">Phase 4: 上线</text>
+
+        <!-- Phase 1: 需求 -->
+        <rect x="40" y="80" width="200" height="110" rx="8" fill="rgba(251,191,36,0.08)" stroke="#fbbf24" stroke-width="1"/>
+
+        <rect x="55" y="96" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="140" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">业务访谈</text>
+        <text x="140" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">核心流程 + 异常场景 + 预期效果</text>
+
+        <rect x="55" y="142" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="140" y="158" fill="white" font-size="10" font-weight="600" text-anchor="middle">AI 生成 PRD</text>
+        <text x="140" y="172" fill="#94a3b8" font-size="8" text-anchor="middle">结构化需求文档 + 优先级</text>
+
+        <!-- Arrow -->
+        <line x1="240" y1="135" x2="268" y2="135" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <!-- Phase 2: 架构 -->
+        <rect x="270" y="80" width="200" height="110" rx="8" fill="rgba(34,211,238,0.08)" stroke="#22d3ee" stroke-width="1"/>
+
+        <rect x="285" y="96" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="370" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">技术选型</text>
+        <text x="370" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">Spring Boot + Vue3 + MySQL</text>
+
+        <rect x="285" y="142" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="370" y="158" fill="white" font-size="10" font-weight="600" text-anchor="middle">架构图 + 模块拆分</text>
+        <text x="370" y="172" fill="#94a3b8" font-size="8" text-anchor="middle">分层架构 + 数据流</text>
+
+        <line x1="470" y1="135" x2="498" y2="135" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <!-- Phase 3: 实现 -->
+        <rect x="500" y="80" width="200" height="110" rx="8" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1"/>
+
+        <rect x="515" y="96" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="600" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">八步法代码生成</text>
+        <text x="600" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">DDL → DO/VO → Mapper → Svc</text>
+
+        <rect x="515" y="142" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="600" y="158" fill="white" font-size="10" font-weight="600" text-anchor="middle">Spec → Plan → Task</text>
+        <text x="600" y="172" fill="#94a3b8" font-size="8" text-anchor="middle">AI Agent 协作 + 人工审核</text>
+
+        <line x1="700" y1="135" x2="728" y2="135" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <!-- Phase 4: 上线 -->
+        <rect x="730" y="80" width="200" height="110" rx="8" fill="rgba(167,139,250,0.08)" stroke="#a78bfa" stroke-width="1"/>
+
+        <rect x="745" y="96" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="830" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">GitHub Actions CI/CD</text>
+        <text x="830" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">单元测试 → 构建 → 部署</text>
+
+        <rect x="745" y="142" width="170" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="830" y="158" fill="white" font-size="10" font-weight="600" text-anchor="middle">容器化部署</text>
+        <text x="830" y="172" fill="#94a3b8" font-size="8" text-anchor="middle">Docker + 监控告警</text>
+
+        <!-- AI Agents Section -->
+        <text x="40" y="230" fill="#22d3ee" font-size="11" font-weight="700">AI 协作机制 (三层 Agent)</text>
+        <rect x="40" y="245" width="890" height="120" rx="8" fill="rgba(8,51,68,0.2)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <rect x="60" y="265" width="180" height="80" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="150" y="288" fill="white" font-size="10" font-weight="600" text-anchor="middle">规划层 Agent</text>
+        <text x="150" y="304" fill="#94a3b8" font-size="8" text-anchor="middle">技术方案推演</text>
+        <text x="150" y="318" fill="#94a3b8" font-size="8" text-anchor="middle">模块职责划分</text>
+        <text x="150" y="332" fill="#94a3b8" font-size="8" text-anchor="middle">开发顺序排期</text>
+
+        <line x1="240" y1="305" x2="270" y2="305" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <rect x="270" y="265" width="180" height="80" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="360" y="288" fill="white" font-size="10" font-weight="600" text-anchor="middle">执行层 Agent</text>
+        <text x="360" y="304" fill="#94a3b8" font-size="8" text-anchor="middle">生成代码骨架</text>
+        <text x="360" y="318" fill="#94a3b8" font-size="8" text-anchor="middle">前后端接口联调</text>
+        <text x="360" y="332" fill="#94a3b8" font-size="8" text-anchor="middle">契约对齐审查</text>
+
+        <line x1="450" y1="305" x2="480" y2="305" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <rect x="480" y="265" width="180" height="80" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="570" y="288" fill="white" font-size="10" font-weight="600" text-anchor="middle">测试层 Agent</text>
+        <text x="570" y="304" fill="#94a3b8" font-size="8" text-anchor="middle">Playwright E2E 测试</text>
+        <text x="570" y="318" fill="#94a3b8" font-size="8" text-anchor="middle">登录 → 下单 → 状态同步</text>
+        <text x="570" y="332" fill="#94a3b8" font-size="8" text-anchor="middle">全链路冒烟验证</text>
+
+        <line x1="660" y1="305" x2="690" y2="305" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead3)"/>
+
+        <rect x="690" y="265" width="220" height="80" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="800" y="288" fill="white" font-size="10" font-weight="600" text-anchor="middle">运维 Agent</text>
+        <text x="800" y="304" fill="#94a3b8" font-size="8" text-anchor="middle">Prometheus + Grafana 监控</text>
+        <text x="800" y="318" fill="#94a3b8" font-size="8" text-anchor="middle">日志洞察 + 告警自愈</text>
+        <text x="800" y="332" fill="#94a3b8" font-size="8" text-anchor="middle">自动化部署 + 回滚</text>
+
+        <!-- Tools row -->
+        <text x="40" y="400" fill="#fbbf24" font-size="11" font-weight="700">AI 工具栈</text>
+        <rect x="40" y="415" width="890" height="80" rx="8" fill="rgba(15,23,42,0.5)" stroke="#1e293b" stroke-width="1"/>
+
+        <rect x="60" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="110" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">Cursor</text>
+        <text x="110" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">核心IDE</text>
+
+        <rect x="175" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="225" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">Claude</text>
+        <text x="225" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">架构设计</text>
+
+        <rect x="290" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="340" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">Hermes</text>
+        <text x="340" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">任务自动化</text>
+
+        <rect x="405" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="455" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">Vercel/v0</text>
+        <text x="455" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">前端UI生成</text>
+
+        <rect x="520" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="570" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">Notion AI</text>
+        <text x="570" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">PRD/知识库</text>
+
+        <rect x="635" y="432" width="100" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="685" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">n8n</text>
+        <text x="685" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">工作流自动化</text>
+
+        <rect x="750" y="432" width="160" height="50" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="830" y="452" fill="white" font-size="10" font-weight="600" text-anchor="middle">腾讯云/阿里云</text>
+        <text x="830" y="468" fill="#94a3b8" font-size="8" text-anchor="middle">CloudBase / 百炼 API</text>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===================== 资产清单 ===================== -->
+  <div class="diagram-panel" id="panel-asset">
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 540">
+        <defs>
+          <pattern id="grid4" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid4)"/>
+
+        <text x="40" y="50" fill="white" font-size="12" font-weight="700">资产清单 · Asset Inventory</text>
+
+        <!-- Table header -->
+        <rect x="40" y="65" width="920" height="30" rx="4" fill="rgba(30,41,59,0.8)" stroke="#1e293b"/>
+        <text x="55" y="84" fill="#94a3b8" font-size="9" font-weight="600">类别</text>
+        <text x="200" y="84" fill="#94a3b8" font-size="9" font-weight="600">资产名称</text>
+        <text x="410" y="84" fill="#94a3b8" font-size="9" font-weight="600">技术栈</text>
+        <text x="620" y="84" fill="#94a3b8" font-size="9" font-weight="600">端口/地址</text>
+        <text x="800" y="84" fill="#94a3b8" font-size="9" font-weight="600">状态</text>
+
+        <!-- Row 1: 硬件 -->
+        <rect x="40" y="100" width="920" height="35" rx="2" fill="rgba(251,191,36,0.05)"/>
+        <text x="55" y="122" fill="#fbbf24" font-size="9" font-weight="600">硬件</text>
+        <text x="200" y="122" fill="white" font-size="9">Mac Mini (开发主机)</text>
+        <text x="410" y="122" fill="#94a3b8" font-size="9">Apple Silicon / Docker</text>
+        <text x="620" y="122" fill="#94a3b8" font-size="9">本地</text>
+        <text x="800" y="122" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Row 2: 前端 -->
+        <rect x="40" y="138" width="920" height="35" rx="2" fill="rgba(8,51,68,0.3)"/>
+        <text x="55" y="160" fill="#22d3ee" font-size="9" font-weight="600">前端</text>
+        <text x="200" y="160" fill="white" font-size="9">yudao-admin (vben3)</text>
+        <text x="410" y="160" fill="#94a3b8" font-size="9">Vue3 + Element-Plus</text>
+        <text x="620" y="160" fill="#94a3b8" font-size="9">:8080</text>
+        <text x="800" y="160" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Row 3 -->
+        <rect x="40" y="176" width="920" height="35" rx="2" fill="rgba(8,51,68,0.2)"/>
+        <text x="55" y="198" fill="#22d3ee" font-size="9" font-weight="600">前端</text>
+        <text x="200" y="198" fill="white" font-size="9">yudao-admin-vben (vben5 antd)</text>
+        <text x="410" y="198" fill="#94a3b8" font-size="9">Vue3 + Ant Design</text>
+        <text x="620" y="198" fill="#94a3b8" font-size="9">:8081 (规划)</text>
+        <text x="800" y="198" fill="#fbbf24" font-size="9">待部署</text>
+
+        <!-- Row 4: 后端 -->
+        <rect x="40" y="214" width="920" height="35" rx="2" fill="rgba(6,78,59,0.3)"/>
+        <text x="55" y="236" fill="#34d399" font-size="9" font-weight="600">后端</text>
+        <text x="200" y="236" fill="white" font-size="9">yudao-server (芋道源码)</text>
+        <text x="410" y="236" fill="#94a3b8" font-size="9">Spring Boot / Cloud</text>
+        <text x="620" y="236" fill="#94a3b8" font-size="9">:48080</text>
+        <text x="800" y="236" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Row 5: 数据库 -->
+        <rect x="40" y="252" width="920" height="35" rx="2" fill="rgba(76,29,149,0.3)"/>
+        <text x="55" y="274" fill="#a78bfa" font-size="9" font-weight="600">数据库</text>
+        <text x="200" y="274" fill="white" font-size="9">yudao-mysql (ruoyi-vue-pro)</text>
+        <text x="410" y="274" fill="#94a3b8" font-size="9">MySQL 8 / InnoDB</text>
+        <text x="620" y="274" fill="#94a3b8" font-size="9">:3306</text>
+        <text x="800" y="274" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Row 6: 缓存 -->
+        <rect x="40" y="290" width="920" height="35" rx="2" fill="rgba(76,29,149,0.2)"/>
+        <text x="55" y="312" fill="#a78bfa" font-size="9" font-weight="600">缓存</text>
+        <text x="200" y="312" fill="white" font-size="9">yudao-redis</text>
+        <text x="410" y="312" fill="#94a3b8" font-size="9">Redis</text>
+        <text x="620" y="312" fill="#94a3b8" font-size="9">:6379</text>
+        <text x="800" y="312" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Row 7: GitHub -->
+        <rect x="40" y="328" width="920" height="35" rx="2" fill="rgba(30,41,59,0.5)"/>
+        <text x="55" y="350" fill="#94a3b8" font-size="9" font-weight="600">代码</text>
+        <text x="200" y="350" fill="white" font-size="9">bongxin/yudao-backend</text>
+        <text x="410" y="350" fill="#94a3b8" font-size="9">Git</text>
+        <text x="620" y="350" fill="#94a3b8" font-size="9">github.com/bongxin</text>
+        <text x="800" y="350" fill="#fbbf24" font-size="9">待推送</text>
+
+        <!-- Row 8 -->
+        <rect x="40" y="366" width="920" height="35" rx="2" fill="rgba(30,41,59,0.5)"/>
+        <text x="55" y="388" fill="#94a3b8" font-size="9" font-weight="600">代码</text>
+        <text x="200" y="388" fill="white" font-size="9">bongxin/yudao-ui-admin-vue3</text>
+        <text x="410" y="388" fill="#94a3b8" font-size="9">Git</text>
+        <text x="620" y="388" fill="#94a3b8" font-size="9">github.com/bongxin</text>
+        <text x="800" y="388" fill="#fbbf24" font-size="9">待推送</text>
+
+        <!-- Row 9 -->
+        <rect x="40" y="404" width="920" height="35" rx="2" fill="rgba(30,41,59,0.5)"/>
+        <text x="55" y="426" fill="#94a3b8" font-size="9" font-weight="600">代码</text>
+        <text x="200" y="426" fill="white" font-size="9">bongxin/yudao-ui-admin-vben</text>
+        <text x="410" y="426" fill="#94a3b8" font-size="9">Git</text>
+        <text x="620" y="426" fill="#94a3b8" font-size="9">github.com/bongxin</text>
+        <text x="800" y="426" fill="#fbbf24" font-size="9">待推送</text>
+
+        <!-- Row 10: 代理 -->
+        <rect x="40" y="442" width="920" height="35" rx="2" fill="rgba(120,53,15,0.2)"/>
+        <text x="55" y="464" fill="#fbbf24" font-size="9" font-weight="600">网络</text>
+        <text x="200" y="464" fill="white" font-size="9">Nginx (Docker 代理)</text>
+        <text x="410" y="464" fill="#94a3b8" font-size="9">Nginx</text>
+        <text x="620" y="464" fill="#94a3b8" font-size="9">:8080 → :48080</text>
+        <text x="800" y="464" fill="#34d399" font-size="9">运行中</text>
+
+        <!-- Stats -->
+        <text x="40" y="510" fill="#94a3b8" font-size="9">共 10 项资产 · 运行中 5 · 待部署 1 · 待推送 3 · 待配置 1</text>
+        <text x="40" y="528" fill="#475569" font-size="8">更新时间: 2026-06-11</text>
+
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot cyan"></div>
+          <h3>前端资产</h3>
+        </div>
+        <ul>
+          <li>• yudao-admin vben3 (:8080) — 运行中</li>
+          <li>• yudao-admin-vben vben5 (:8081) — 待部署</li>
+          <li>• 移动端 UniApp — 规划中</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot emerald"></div>
+          <h3>后端 & 数据</h3>
+        </div>
+        <ul>
+          <li>• yudao-server (:48080) — 运行中</li>
+          <li>• MySQL ruoyi-vue-pro (:3306) — 运行中</li>
+          <li>• Redis (:6379) — 运行中</li>
+          <li>• Flowable BPM — 集成中</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>GitHub Repos (bongxin)</h3>
+        </div>
+        <ul>
+          <li>• yudao-backend — 待推送</li>
+          <li>• yudao-ui-admin-vue3 — 待推送</li>
+          <li>• yudao-ui-admin-vben — 待推送</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot violet"></div>
+          <h3>AI 工具栈</h3>
+        </div>
+        <ul>
+          <li>• Cursor (核心IDE) · Claude (架构)</li>
+          <li>• Hermes Agent (自动化)</li>
+          <li>• Notion AI (PRD/知识库)</li>
+          <li>• n8n (工作流) · Vercel (部署)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">一人公司 · AI Coding 全栈工作流 · 基于芋道源码 + Vibe Coding · 2026</p>
+</div>
+
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.diagram-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
