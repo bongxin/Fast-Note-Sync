@@ -267,11 +267,14 @@
       return '<span class="tag tag-' + type + '">' + text + '</span>';
     }
 
-    function renderSubTable(lines, date) {
-      let rows = lines.map(function (l) {
+    function renderSubTable(lines, date, pending) {
+      let rows = lines.map(function (l, i) {
         var inspTag = l.inspection === '合格' ? tagHtml('合格', 'success') : tagHtml('不合格', 'danger');
         var sign = l.inspectorSign ? '<span class="sign-box">' + l.inspectorSign + '</span>' : '<span style="color:#c0c4cc">—</span>';
-        return '<tr><td>' + l.lineName + '</td><td class="text-center">' + l.slaughterQty + '</td><td class="text-center">' + inspTag + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
+        var qtyCell = pending
+          ? '<input class="input" type="number" value="' + l.slaughterQty + '" style="width:80px;text-align:center" />'
+          : l.slaughterQty;
+        return '<tr><td>' + l.lineName + '</td><td class="text-center">' + qtyCell + '</td><td class="text-center">' + inspTag + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
       }).join('');
       return '<div class="expand-inner"><div class="expand-title">生产线明细 — ' + date + '</div><div class="table-wrap"><table class="sub-table"><thead><tr><th>生产线</th><th class="text-center">各生产线屠宰数量</th><th class="text-center">胴体、内脏检验</th><th class="text-center">检验员</th><th>登记时间</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
     }
@@ -281,17 +284,22 @@
       tbody.innerHTML = data.map(function (row, idx) {
         var striped = idx % 2 === 1 ? ' striped' : '';
         var statusTag = row.status === 'pending' ? tagHtml('待审核', 'warning') : tagHtml('已通过', 'success');
-        var reasonCell = row.status === 'pending'
-          ? '<textarea class="textarea" rows="2" placeholder="请输入无害化处理原因及方式">' + (row.treatmentReason || '') + '</textarea>'
-          : (row.treatmentReason || '—');
-        var actionBtn = row.status === 'pending'
+        var pending = row.status === 'pending';
+        var diseasedCell = pending
+          ? '<input class="input" type="number" value="' + row.diseasedAnimalQty + '" style="width:72px;text-align:center" />'
+          : row.diseasedAnimalQty;
+        var productCell = pending
+          ? '<input class="input" type="number" value="' + row.diseasedProductKg + '" style="width:72px;text-align:center" step="0.1" />'
+          : row.diseasedProductKg;
+        var reasonCell = row.treatmentReason || '—';
+        var actionBtn = pending
           ? '<button class="btn btn-link" data-action="audit" data-id="' + row.id + '">审核</button>'
           : '<button class="btn btn-link" data-action="view" data-id="' + row.id + '">查看</button>';
         var mainRow = '<tr class="' + striped.trim() + '" data-id="' + row.id + '">' +
           '<td class="text-center"><span class="expand-btn" data-expand="' + row.id + '">▶</span></td>' +
           '<td>' + row.slaughterDate + '</td>' +
-          '<td class="text-center">' + row.diseasedAnimalQty + '</td>' +
-          '<td class="text-center">' + row.diseasedProductKg + '</td>' +
+          '<td class="text-center">' + diseasedCell + '</td>' +
+          '<td class="text-center">' + productCell + '</td>' +
           '<td>' + reasonCell + '</td>' +
           '<td class="text-center">' + row.totalSlaughter + '</td>' +
           '<td class="text-center">' + row.qualifiedQty + '</td>' +
@@ -299,7 +307,7 @@
           '<td class="text-center">' + (row.reviewer || '—') + '</td>' +
           '<td class="text-center">' + (row.reviewTime || '—') + '</td>' +
           '<td class="text-center">' + actionBtn + '</td></tr>';
-        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:none"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate) + '</td></tr>';
+        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:none"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, pending) + '</td></tr>';
         return mainRow + expandRow;
       }).join('');
     }
