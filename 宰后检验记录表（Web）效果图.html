@@ -185,7 +185,7 @@
                   <th class="text-center">审核状态</th>
                   <th class="text-center">复核人</th>
                   <th class="text-center">复核时间</th>
-                  <th class="text-center" style="width:80px">操作</th>
+                  <th class="text-center" style="width:110px">操作</th>
                 </tr>
               </thead>
               <tbody id="tableBody"></tbody>
@@ -267,11 +267,11 @@
       return '<span class="tag tag-' + type + '">' + text + '</span>';
     }
 
-    function renderSubTable(lines, date, pending) {
-      let rows = lines.map(function (l, i) {
+    function renderSubTable(lines, date, editing) {
+      let rows = lines.map(function (l) {
         var inspTag = l.inspection === '合格' ? tagHtml('合格', 'success') : tagHtml('不合格', 'danger');
         var sign = l.inspectorSign ? '<span class="sign-box">' + l.inspectorSign + '</span>' : '<span style="color:#c0c4cc">—</span>';
-        var qtyCell = pending
+        var qtyCell = editing
           ? '<input class="input" type="number" value="' + l.slaughterQty + '" style="width:80px;text-align:center" />'
           : l.slaughterQty;
         return '<tr><td>' + l.lineName + '</td><td class="text-center">' + qtyCell + '</td><td class="text-center">' + inspTag + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
@@ -285,17 +285,30 @@
         var striped = idx % 2 === 1 ? ' striped' : '';
         var statusTag = row.status === 'pending' ? tagHtml('待审核', 'warning') : tagHtml('已通过', 'success');
         var pending = row.status === 'pending';
-        var diseasedCell = pending
+        var editing = pending && editingRowId === row.id;
+        var diseasedCell = editing
           ? '<input class="input" type="number" value="' + row.diseasedAnimalQty + '" style="width:72px;text-align:center" />'
           : row.diseasedAnimalQty;
-        var productCell = pending
+        var productCell = editing
           ? '<input class="input" type="number" value="' + row.diseasedProductKg + '" style="width:72px;text-align:center" step="0.1" />'
           : row.diseasedProductKg;
-        var reasonCell = row.treatmentReason || '—';
-        var actionBtn = pending
-          ? '<button class="btn btn-link" data-action="audit" data-id="' + row.id + '">审核</button>'
-          : '<button class="btn btn-link" data-action="view" data-id="' + row.id + '">查看</button>';
-        var mainRow = '<tr class="' + striped.trim() + '" data-id="' + row.id + '">' +
+        var reasonCell = editing
+          ? '<input class="input" type="text" value="' + (row.treatmentReason || '干化') + '" style="width:100%" />'
+          : (row.treatmentReason || '干化');
+        var actionBtn;
+        if (pending) {
+          if (editing) {
+            actionBtn = '<button class="btn btn-link" data-action="save" data-id="' + row.id + '">保存</button>' +
+              '<button class="btn btn-link" data-action="cancel-edit" data-id="' + row.id + '">取消</button>' +
+              '<button class="btn btn-link" data-action="audit" data-id="' + row.id + '">审核</button>';
+          } else {
+            actionBtn = '<button class="btn btn-link" data-action="edit" data-id="' + row.id + '">编辑</button>' +
+              '<button class="btn btn-link" data-action="audit" data-id="' + row.id + '">审核</button>';
+          }
+        } else {
+          actionBtn = '<button class="btn btn-link" data-action="view" data-id="' + row.id + '">查看</button>';
+        }
+        var mainRow = '<tr class="' + striped.trim() + (editing ? ' editing-row' : '') + '" data-id="' + row.id + '">' +
           '<td class="text-center"><span class="expand-btn" data-expand="' + row.id + '">▶</span></td>' +
           '<td>' + row.slaughterDate + '</td>' +
           '<td class="text-center">' + diseasedCell + '</td>' +
@@ -307,7 +320,8 @@
           '<td class="text-center">' + (row.reviewer || '—') + '</td>' +
           '<td class="text-center">' + (row.reviewTime || '—') + '</td>' +
           '<td class="text-center">' + actionBtn + '</td></tr>';
-        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:none"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, pending) + '</td></tr>';
+        var expandDisplay = editing || document.getElementById('expand-' + row.id)?.style.display === 'table-row' ? 'table-row' : 'none';
+        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (editing ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
         return mainRow + expandRow;
       }).join('');
     }
@@ -357,7 +371,27 @@
       if (btn) {
         var id = parseInt(btn.getAttribute('data-id'), 10);
         var row = data.find(function (r) { return r.id === id; });
-        openDrawer(row, btn.getAttribute('data-action'));
+        var action = btn.getAttribute('data-action');
+        if (action === 'edit') {
+          editingRowId = id;
+          renderTable();
+          return;
+        }
+        if (action === 'cancel-edit') {
+          editingRowId = null;
+          renderTable();
+          return;
+        }
+        if (action === 'save') {
+          editingRowId = null;
+          renderTable();
+          var toast = document.getElementById('toast');
+          toast.textContent = '保存成功';
+          toast.classList.add('show');
+          setTimeout(function () { toast.classList.remove('show'); toast.textContent = '审核成功'; }, 2000);
+          return;
+        }
+        openDrawer(row, action);
       }
     });
 
@@ -375,6 +409,7 @@
         row.status = 'approved';
         row.reviewer = '张三';
         row.reviewTime = '2026-06-26 18:00';
+        editingRowId = null;
         renderTable();
         closeDrawer();
         var toast = document.getElementById('toast');
