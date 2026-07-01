@@ -322,9 +322,7 @@
           '<td class="text-center">' + (row.reviewer || '—') + '</td>' +
           '<td class="text-center">' + (row.reviewTime || '—') + '</td>' +
           '<td class="text-center">' + actionBtn + '</td></tr>';
-        var expandEl = document.getElementById('expand-' + row.id);
-        var expandOpen = editing || (expandEl && expandEl.style.display === 'table-row');
-        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (expandOpen ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
+        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (editing ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
         return mainRow + expandRow;
       }).join('');
     }
