@@ -184,6 +184,7 @@
                   <th class="text-center">合格数量</th>
                   <th class="text-center">审核状态</th>
                   <th class="text-center">复核人</th>
+                  <th class="text-center">复核人签名</th>
                   <th class="text-center">复核时间</th>
                   <th class="text-center" style="width:110px">操作</th>
                 </tr>
@@ -236,31 +237,31 @@
       {
         id: 1, slaughterDate: '2026-06-26', diseasedAnimalQty: 2, diseasedProductKg: 45.5,
         treatmentReason: '干化', totalSlaughter: 1260, qualifiedQty: 1258,
-        status: 'pending', reviewer: '', reviewTime: '',
+        status: 'pending', reviewer: '', reviewerSign: '', reviewTime: '',
         lines: [
-          { lineName: '1号线', slaughterQty: 420, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-26 09:15' },
-          { lineName: '2号线', slaughterQty: 438, inspection: '不合格', inspectorSign: '李四', registerTime: '2026-06-26 10:30' },
-          { lineName: '3号线', slaughterQty: 402, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-26 14:20' }
+          { lineName: '1号线', slaughterQty: 420, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-26 09:15' },
+          { lineName: '2号线', slaughterQty: 438, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-26 10:30' },
+          { lineName: '3号线', slaughterQty: 402, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-26 14:20' }
         ]
       },
       {
         id: 2, slaughterDate: '2026-06-25', diseasedAnimalQty: 0, diseasedProductKg: 0,
         treatmentReason: '干化', totalSlaughter: 1185, qualifiedQty: 1185,
-        status: 'approved', reviewer: '张三', reviewTime: '2026-06-25 17:30',
+        status: 'approved', reviewer: '张三', reviewerSign: '张三', reviewTime: '2026-06-25 17:30',
         lines: [
-          { lineName: '1号线', slaughterQty: 395, inspection: '合格', inspectorSign: '李四', registerTime: '2026-06-25 08:50' },
-          { lineName: '2号线', slaughterQty: 400, inspection: '合格', inspectorSign: '李四', registerTime: '2026-06-25 11:00' },
-          { lineName: '3号线', slaughterQty: 390, inspection: '合格', inspectorSign: '王五', registerTime: '2026-06-25 15:40' }
+          { lineName: '1号线', slaughterQty: 395, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-25 08:50' },
+          { lineName: '2号线', slaughterQty: 400, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-25 11:00' },
+          { lineName: '3号线', slaughterQty: 390, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-25 15:40' }
         ]
       },
       {
         id: 3, slaughterDate: '2026-06-24', diseasedAnimalQty: 1, diseasedProductKg: 28,
         treatmentReason: '干化', totalSlaughter: 1200, qualifiedQty: 1199,
-        status: 'approved', reviewer: '张三', reviewTime: '2026-06-24 16:45',
+        status: 'approved', reviewer: '张三', reviewerSign: '张三', reviewTime: '2026-06-24 16:45',
         lines: [
-          { lineName: '1号线', slaughterQty: 410, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-24 09:00' },
-          { lineName: '2号线', slaughterQty: 395, inspection: '不合格', inspectorSign: '李四', registerTime: '2026-06-24 10:15' },
-          { lineName: '3号线', slaughterQty: 395, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-24 13:50' }
+          { lineName: '1号线', slaughterQty: 410, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-24 09:00' },
+          { lineName: '2号线', slaughterQty: 395, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-24 10:15' },
+          { lineName: '3号线', slaughterQty: 395, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-24 13:50' }
         ]
       }
     ];
@@ -269,16 +270,26 @@
       return '<span class="tag tag-' + type + '">' + text + '</span>';
     }
 
+    function inspectionCell(value, editing) {
+      if (editing) {
+        return '<select class="select" style="width:88px;height:28px;padding:0 6px">' +
+          '<option' + (value === '合格' ? ' selected' : '') + '>合格</option>' +
+          '<option' + (value === '不合格' ? ' selected' : '') + '>不合格</option></select>';
+      }
+      return value === '合格' ? tagHtml('合格', 'success') : tagHtml('不合格', 'danger');
+    }
+
     function renderSubTable(lines, date, editing) {
       let rows = lines.map(function (l) {
-        var inspTag = l.inspection === '合格' ? tagHtml('合格', 'success') : tagHtml('不合格', 'danger');
+        var inspCell = inspectionCell(l.inspection || '合格', editing);
+        var inspectorName = l.inspector || '—';
         var sign = l.inspectorSign ? '<span class="sign-box">' + l.inspectorSign + '</span>' : '<span style="color:#c0c4cc">—</span>';
         var qtyCell = editing
           ? '<input class="input" type="number" value="' + l.slaughterQty + '" style="width:80px;text-align:center" />'
           : l.slaughterQty;
-        return '<tr><td>' + l.lineName + '</td><td class="text-center">' + qtyCell + '</td><td class="text-center">' + inspTag + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
+        return '<tr><td>' + l.lineName + '</td><td class="text-center">' + qtyCell + '</td><td class="text-center">' + inspCell + '</td><td class="text-center">' + inspectorName + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
       }).join('');
-      return '<div class="expand-inner"><div class="expand-title">生产线明细 — ' + date + '</div><div class="table-wrap"><table class="sub-table"><thead><tr><th>生产线</th><th class="text-center">各生产线屠宰数量</th><th class="text-center">胴体、内脏检验</th><th class="text-center">检验员</th><th>登记时间</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+      return '<div class="expand-inner"><div class="expand-title">生产线明细 — ' + date + '</div><div class="table-wrap"><table class="sub-table"><thead><tr><th>生产线</th><th class="text-center">各生产线屠宰数量</th><th class="text-center">胴体、内脏检验</th><th class="text-center">检验员</th><th class="text-center">检验员签名</th><th>登记时间</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
     }
 
     function renderTable() {
@@ -320,9 +331,10 @@
           '<td class="text-center">' + row.qualifiedQty + '</td>' +
           '<td class="text-center">' + statusTag + '</td>' +
           '<td class="text-center">' + (row.reviewer || '—') + '</td>' +
+          '<td class="text-center">' + (row.reviewerSign ? '<span class="sign-box">' + row.reviewerSign + '</span>' : '—') + '</td>' +
           '<td class="text-center">' + (row.reviewTime || '—') + '</td>' +
           '<td class="text-center">' + actionBtn + '</td></tr>';
-        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (editing ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
+        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (editing ? 'table-row' : 'none') + '"><td colspan="12">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
         return mainRow + expandRow;
       }).join('');
     }
@@ -409,6 +421,7 @@
         var row = data.find(function (r) { return r.id === id; });
         row.status = 'approved';
         row.reviewer = '张三';
+        row.reviewerSign = '张三';
         row.reviewTime = '2026-06-26 18:00';
         editingRowId = null;
         renderTable();
