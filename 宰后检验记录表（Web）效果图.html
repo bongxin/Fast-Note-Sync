@@ -305,9 +305,7 @@
         var productCell = editing
           ? '<input class="input" type="number" value="' + row.diseasedProductKg + '" style="width:72px;text-align:center" step="0.1" />'
           : row.diseasedProductKg;
-        var reasonCell = editing
-          ? '<input class="input" type="text" value="' + (row.treatmentReason || '干化') + '" style="width:100%" />'
-          : (row.treatmentReason || '干化');
+        var reasonCell = '干化';
         var actionBtn;
         if (pending) {
           if (editing) {
