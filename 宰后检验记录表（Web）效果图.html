@@ -230,10 +230,12 @@
   <div class="toast" id="toast">审核成功</div>
 
   <script>
+    var editingRowId = null;
+
     const data = [
       {
         id: 1, slaughterDate: '2026-06-26', diseasedAnimalQty: 2, diseasedProductKg: 45.5,
-        treatmentReason: '可见淋巴结病变，干化处理', totalSlaughter: 1260, qualifiedQty: 1258,
+        treatmentReason: '干化', totalSlaughter: 1260, qualifiedQty: 1258,
         status: 'pending', reviewer: '', reviewTime: '',
         lines: [
           { lineName: '1号线', slaughterQty: 420, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-26 09:15' },
@@ -243,7 +245,7 @@
       },
       {
         id: 2, slaughterDate: '2026-06-25', diseasedAnimalQty: 0, diseasedProductKg: 0,
-        treatmentReason: '', totalSlaughter: 1185, qualifiedQty: 1185,
+        treatmentReason: '干化', totalSlaughter: 1185, qualifiedQty: 1185,
         status: 'approved', reviewer: '张三', reviewTime: '2026-06-25 17:30',
         lines: [
           { lineName: '1号线', slaughterQty: 395, inspection: '合格', inspectorSign: '李四', registerTime: '2026-06-25 08:50' },
@@ -253,7 +255,7 @@
       },
       {
         id: 3, slaughterDate: '2026-06-24', diseasedAnimalQty: 1, diseasedProductKg: 28,
-        treatmentReason: '寄生虫，高温处理', totalSlaughter: 1200, qualifiedQty: 1199,
+        treatmentReason: '干化', totalSlaughter: 1200, qualifiedQty: 1199,
         status: 'approved', reviewer: '张三', reviewTime: '2026-06-24 16:45',
         lines: [
           { lineName: '1号线', slaughterQty: 410, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-24 09:00' },
@@ -320,8 +322,9 @@
           '<td class="text-center">' + (row.reviewer || '—') + '</td>' +
           '<td class="text-center">' + (row.reviewTime || '—') + '</td>' +
           '<td class="text-center">' + actionBtn + '</td></tr>';
-        var expandDisplay = editing || document.getElementById('expand-' + row.id)?.style.display === 'table-row' ? 'table-row' : 'none';
-        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (editing ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
+        var expandEl = document.getElementById('expand-' + row.id);
+        var expandOpen = editing || (expandEl && expandEl.style.display === 'table-row');
+        var expandRow = '<tr class="expand-row" id="expand-' + row.id + '" style="display:' + (expandOpen ? 'table-row' : 'none') + '"><td colspan="11">' + renderSubTable(row.lines, row.slaughterDate, editing) + '</td></tr>';
         return mainRow + expandRow;
       }).join('');
     }
