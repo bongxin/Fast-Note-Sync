@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宰后检验记录表 - 效果图</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body, #app { height: 100%; font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif; }
+    .layout { display: flex; height: 100%; background: #f0f2f5; }
+
+    /* 侧边栏 - vue-element-plus-admin 风格 */
+    .sidebar {
+      width: 210px;
+      background: #001529;
+      color: #bfcbd9;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.28s;
+    }
+    .sidebar.collapsed { width: 64px; }
+    .logo {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #002140;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .logo span { margin-left: 8px; }
+    .sidebar.collapsed .logo span { display: none; }
+    .menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+    .menu-group-title {
+      padding: 12px 20px 6px;
+      font-size: 12px;
+      color: #6b7a8d;
+    }
+    .sidebar.collapsed .menu-group-title { display: none; }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 48px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .menu-item:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .menu-item.active { color: #fff; background: #409eff; }
+    .menu-item .icon { width: 20px; text-align: center; margin-right: 10px; flex-shrink: 0; }
+    .sidebar.collapsed .menu-item { justify-content: center; padding: 0; }
+    .sidebar.collapsed .menu-item .label { display: none; }
+    .sidebar.collapsed .menu-item .icon { margin-right: 0; }
+
+    /* 主区域 */
+    .main-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .navbar {
+      height: 50px;
+      background: #fff;
+      border-bottom: 1px solid #e6e6e6;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      box-shadow: 0 1px 4px rgba(0,21,41,0.08);
+    }
+    .hamburger {
+      font-size: 20px;
+      cursor: pointer;
+      color: #5a5e66;
+      margin-right: 16px;
+      padding: 4px;
+    }
+    .breadcrumb { flex: 1; font-size: 14px; color: #97a8be; }
+    .breadcrumb b { color: #303133; font-weight: 500; }
+    .navbar-right { display: flex; align-items: center; gap: 16px; color: #5a5e66; font-size: 14px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, #409eff, #66b1ff);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+
+    .app-main { flex: 1; padding: 16px; overflow: auto; }
+
+    /* 搜索区卡片 */
+    .search-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 18px 18px 0;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,21,41,0.04);
+    }
+    .table-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,21,41,0.04);
+    }
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .table-title { font-size: 16px; font-weight: 600; color: #303133; }
+
+    /* 二级列表 */
+    .expand-inner {
+      padding: 12px 20px 12px 48px;
+      background: #fafafa;
+      border-radius: 4px;
+    }
+    .expand-title {
+      font-size: 13px;
+      color: #909399;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    /* 签名占位 */
+    .sign-box {
+      display: inline-block;
+      width: 72px;
+      height: 32px;
+      border: 1px dashed #dcdfe6;
+      border-radius: 4px;
+      background: #fff;
+      font-family: "KaiTi", "STKaiti", serif;
+      font-size: 18px;
+      color: #303133;
+      text-align: center;
+      line-height: 30px;
+    }
+
+    /* 抽屉 */
+    .drawer-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #303133;
+      margin: 16px 0 12px;
+      padding-left: 8px;
+      border-left: 3px solid #409eff;
+    }
+    .drawer-info .el-descriptions { margin-bottom: 8px; }
+    .notes-box {
+      background: #f5f7fa;
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #606266;
+      line-height: 1.8;
+    }
+    .notes-box p { margin: 0; }
+
+    .editable-hint { font-size: 12px; color: #e6a23c; margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="layout">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" :class="{ collapsed: isCollapse }">
+      <div class="logo">🐷<span>粤海屠宰监管</span></div>
+      <nav class="menu">
+        <div class="menu-group-title">屠宰监管</div>
+        <div class="menu-item"><span class="icon">📋</span><span class="label">巡仓登记审核</span></div>
+        <div class="menu-item"><span class="icon">📦</span><span class="label">留仓记录</span></div>
+        <div class="menu-item active"><span class="icon">🔬</span><span class="label">宰后检验记录表</span></div>
+        <div class="menu-group-title">系统管理</div>
+        <div class="menu-item"><span class="icon">⚙️</span><span class="label">用户管理</span></div>
+      </nav>
+    </aside>
+
+    <div class="main-wrap">
+      <!-- 顶栏 -->
+      <header class="navbar">
+        <span class="hamburger" @click="isCollapse = !isCollapse">☰</span>
+        <div class="breadcrumb">
+          屠宰监管 / <b>宰后检验记录表</b>
+        </div>
+        <div class="navbar-right">
+          <span>品控部 · 张三</span>
+          <div class="avatar">张</div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <!-- 筛选区 -->
+        <div class="search-card">
+          <el-form :inline="true" :model="query" label-width="80px">
+            <el-form-item label="日期范围">
+              <el-date-picker
+                v-model="query.dateRange"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="YYYY-MM-DD"
+                style="width: 260px"
+              />
+            </el-form-item>
+            <el-form-item label="审核状态">
+              <el-select v-model="query.status" placeholder="全部" style="width: 140px" clearable>
+                <el-option label="全部" value="" />
+                <el-option label="待审核" value="pending" />
+                <el-option label="已通过" value="approved" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" :icon="Search">查询</el-button>
+              <el-button :icon="Refresh">重置</el-button>
+              <el-button type="success" :icon="Download" @click="exportDialogVisible = true">导出</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- 表格区 -->
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">宰后检验记录表</span>
+            <el-tag type="info" size="small">近 7 天</el-tag>
+          </div>
+
+          <el-table :data="tableData" border stripe style="width: 100%" row-key="id">
+            <el-table-column type="expand">
+              <template #default="{ row }">
+                <div class="expand-inner">
+                  <div class="expand-title">生产线明细 — {{ row.slaughterDate }}</div>
+                  <el-table :data="row.lines" border size="small" style="width: 100%">
+                    <el-table-column prop="lineName" label="生产线" width="120" />
+                    <el-table-column prop="slaughterQty" label="各生产线屠宰数量" width="160" align="center" />
+                    <el-table-column label="胴体、内脏检验" width="140" align="center">
+                      <template #default="{ row: line }">
+                        <el-tag :type="line.inspection === '合格' ? 'success' : 'danger'" size="small">
+                          {{ line.inspection }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="检验员" width="120" align="center">
+                      <template #default="{ row: line }">
+                        <span v-if="line.inspectorSign" class="sign-box">{{ line.inspectorSign }}</span>
+                        <span v-else style="color:#c0c4cc">—</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="registerTime" label="登记时间" min-width="160" />
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="slaughterDate" label="屠宰时间" width="120" fixed />
+            <el-table-column prop="diseasedAnimalQty" label="病害畜处理数量" width="130" align="center" />
+            <el-table-column prop="diseasedProductKg" label="病害畜产品处理数量（公斤）" width="200" align="center" />
+            <el-table-column label="无害化处理原因及方式" min-width="220">
+              <template #default="{ row }">
+                <el-input
+                  v-if="row.status === 'pending'"
+                  v-model="row.treatmentReason"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入无害化处理原因及方式"
+                  size="small"
+                />
+                <span v-else>{{ row.treatmentReason || '—' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="totalSlaughter" label="总屠宰数" width="100" align="center" />
+            <el-table-column prop="qualifiedQty" label="合格数量" width="100" align="center" />
+            <el-table-column label="审核状态" width="100" align="center">
+              <template #default="{ row }">
+                <el-tag :type="row.status === 'pending' ? 'warning' : 'success'" size="small">
+                  {{ row.status === 'pending' ? '待审核' : '已通过' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="reviewer" label="复核人" width="90" align="center">
+              <template #default="{ row }">{{ row.reviewer || '—' }}</template>
+            </el-table-column>
+            <el-table-column prop="reviewTime" label="复核时间" width="160" align="center">
+              <template #default="{ row }">{{ row.reviewTime || '—' }}</template>
+            </el-table-column>
+            <el-table-column label="操作" width="90" fixed="right" align="center">
+              <template #default="{ row }">
+                <el-button
+                  v-if="row.status === 'pending'"
+                  type="primary"
+                  link
+                  @click="openDrawer(row, 'audit')"
+                >审核</el-button>
+                <el-button v-else type="primary" link @click="openDrawer(row, 'view')">查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+            <el-pagination
+              background
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="3"
+              :page-sizes="[10, 20, 50]"
+              :page-size="10"
+              :current-page="1"
+            />
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 审核抽屉 -->
+  <el-drawer
+    v-model="drawerVisible"
+    :title="drawerMode === 'audit' ? '复核审核' : '查看复核信息'"
+    direction="rtl"
+    size="480px"
+  >
+    <template v-if="currentRow">
+      <div class="drawer-section-title">审核信息</div>
+      <el-descriptions :column="1" border class="drawer-info">
+        <el-descriptions-item label="屠宰时间">{{ currentRow.slaughterDate }}</el-descriptions-item>
+        <el-descriptions-item label="审核状态">
+          <el-tag :type="currentRow.status === 'pending' ? 'warning' : 'success'" size="small">
+            {{ currentRow.status === 'pending' ? '待审核' : '已通过' }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="复核人">{{ currentRow.status === 'pending' ? '张三（当前用户）' : currentRow.reviewer }}</el-descriptions-item>
+        <el-descriptions-item label="复核人签名">
+          <span class="sign-box">张三</span>
+        </el-descriptions-item>
+        <el-descriptions-item v-if="currentRow.reviewTime" label="复核时间">{{ currentRow.reviewTime }}</el-descriptions-item>
+      </el-descriptions>
+
+      <div class="drawer-section-title">填表说明</div>
+      <div class="notes-box">
+        <p>1. 根据当日屠宰批次顺序登记。</p>
+        <p>2. 病害畜处理数量为经确认无害化处理的病害猪数量（头）；病害畜产品处理数量为经确认不可食用而无害化处理的动物产品数量（公斤）。</p>
+        <p>3. “不合格”指胴体、内脏等存在可见病灶、病变淋巴结、寄生虫、气味异常等情形，须按规定无害化处理。</p>
+        <p>4. 企业应按月（季、年）汇总备查，保存期限不得少于 2 年。</p>
+      </div>
+
+      <div v-if="drawerMode === 'audit'" style="margin-top: 24px; text-align: right;">
+        <el-button @click="drawerVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleApprove">通过</el-button>
+      </div>
+    </template>
+  </el-drawer>
+
+  <!-- 导出弹窗 -->
+  <el-dialog v-model="exportDialogVisible" title="导出宰后检验记录表" width="420px">
+    <el-form label-width="100px">
+      <el-form-item label="屠宰日期" required>
+        <el-date-picker
+          v-model="exportDate"
+          type="date"
+          placeholder="选择具体某一天"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </el-form-item>
+      <el-alert type="info" :closable="false" show-icon title="将按《宰后检验记录表》纸质模板格式导出 Excel（YH/QR-206）" />
+    </el-form>
+    <template #footer>
+      <el-button @click="exportDialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="exportDialogVisible = false">确认导出</el-button>
+    </template>
+  </el-dialog>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus"></script>
+<script src="https://unpkg.com/@element-plus/icons-vue"></script>
+<script>
+const { createApp, ref, shallowRef } = Vue;
+
+const app = createApp({
+  setup() {
+    const isCollapse = ref(false);
+    const drawerVisible = ref(false);
+    const drawerMode = ref('audit');
+    const currentRow = ref(null);
+    const exportDialogVisible = ref(false);
+    const exportDate = ref('');
+
+    const query = ref({
+      dateRange: ['2026-06-20', '2026-06-26'],
+      status: ''
+    });
+
+    const tableData = ref([
+      {
+        id: 1,
+        slaughterDate: '2026-06-26',
+        diseasedAnimalQty: 2,
+        diseasedProductKg: 45.5,
+        treatmentReason: '可见淋巴结病变，干化处理',
+        totalSlaughter: 1260,
+        qualifiedQty: 1258,
+        status: 'pending',
+        reviewer: '',
+        reviewTime: '',
+        lines: [
+          { lineName: '1号线', slaughterQty: 420, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-26 09:15' },
+          { lineName: '2号线', slaughterQty: 438, inspection: '不合格', inspectorSign: '李四', registerTime: '2026-06-26 10:30' },
+          { lineName: '3号线', slaughterQty: 402, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-26 14:20' }
+        ]
+      },
+      {
+        id: 2,
+        slaughterDate: '2026-06-25',
+        diseasedAnimalQty: 0,
+        diseasedProductKg: 0,
+        treatmentReason: '',
+        totalSlaughter: 1185,
+        qualifiedQty: 1185,
+        status: 'approved',
+        reviewer: '张三',
+        reviewTime: '2026-06-25 17:30',
+        lines: [
+          { lineName: '1号线', slaughterQty: 395, inspection: '合格', inspectorSign: '李四', registerTime: '2026-06-25 08:50' },
+          { lineName: '2号线', slaughterQty: 400, inspection: '合格', inspectorSign: '李四', registerTime: '2026-06-25 11:00' },
+          { lineName: '3号线', slaughterQty: 390, inspection: '合格', inspectorSign: '王五', registerTime: '2026-06-25 15:40' }
+        ]
+      },
+      {
+        id: 3,
+        slaughterDate: '2026-06-24',
+        diseasedAnimalQty: 1,
+        diseasedProductKg: 28,
+        treatmentReason: '寄生虫，高温处理',
+        totalSlaughter: 1200,
+        qualifiedQty: 1199,
+        status: 'approved',
+        reviewer: '张三',
+        reviewTime: '2026-06-24 16:45',
+        lines: [
+          { lineName: '1号线', slaughterQty: 410, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-24 09:00' },
+          { lineName: '2号线', slaughterQty: 395, inspection: '不合格', inspectorSign: '李四', registerTime: '2026-06-24 10:15' },
+          { lineName: '3号线', slaughterQty: 395, inspection: '不合格', inspectorSign: '王五', registerTime: '2026-06-24 13:50' }
+        ]
+      }
+    ]);
+
+    function openDrawer(row, mode) {
+      currentRow.value = row;
+      drawerMode.value = mode;
+      drawerVisible.value = true;
+    }
+
+    function handleApprove() {
+      ElementPlus.ElMessage.success('审核成功');
+      if (currentRow.value) {
+        currentRow.value.status = 'approved';
+        currentRow.value.reviewer = '张三';
+        currentRow.value.reviewTime = '2026-06-26 18:00';
+      }
+      drawerVisible.value = false;
+    }
+
+    return {
+      isCollapse,
+      query,
+      tableData,
+      drawerVisible,
+      drawerMode,
+      currentRow,
+      exportDialogVisible,
+      exportDate,
+      openDrawer,
+      handleApprove,
+      Search: shallowRef(ElementPlusIconsVue.Search),
+      Refresh: shallowRef(ElementPlusIconsVue.Refresh),
+      Download: shallowRef(ElementPlusIconsVue.Download)
+    };
+  }
+});
+
+app.use(ElementPlus);
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+app.mount('#app');
+</script>
+</body>
+</html>
