@@ -234,15 +234,29 @@
   <script>
     var editingRowId = null;
 
+    function makeLine(lineName, slaughterQty, inspection, reg1, reg2) {
+      return {
+        lineName: lineName,
+        slaughterQty: slaughterQty,
+        inspection: inspection,
+        registrations: [
+          { inspector: reg1.inspector, inspectorSign: reg1.sign, registerTime: reg1.time },
+          { inspector: reg2.inspector, inspectorSign: reg2.sign, registerTime: reg2.time }
+        ]
+      };
+    }
+
     const data = [
       {
         id: 1, slaughterDate: '2026-06-26', diseasedAnimalQty: 2, diseasedProductKg: 45.5,
         treatmentReason: '干化', totalSlaughter: 1260, qualifiedQty: 1258,
         status: 'pending', reviewer: '', reviewerSign: '', reviewTime: '',
         lines: [
-          { lineName: '1号线', slaughterQty: 420, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-26 09:15' },
-          { lineName: '2号线', slaughterQty: 438, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-26 10:30' },
-          { lineName: '3号线', slaughterQty: 402, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-26 14:20' }
+          makeLine('1号线', 252, '合格', { inspector: '王五', sign: '王五', time: '2026-06-26 09:15' }, { inspector: '赵六', sign: '赵六', time: '2026-06-26 11:20' }),
+          makeLine('2号线', 252, '合格', { inspector: '李四', sign: '李四', time: '2026-06-26 10:30' }, { inspector: '钱七', sign: '钱七', time: '2026-06-26 12:45' }),
+          makeLine('3号线', 252, '合格', { inspector: '王五', sign: '王五', time: '2026-06-26 14:20' }, { inspector: '孙八', sign: '孙八', time: '2026-06-26 16:10' }),
+          makeLine('4号线', 252, '合格', { inspector: '李四', sign: '李四', time: '2026-06-26 09:50' }, { inspector: '周九', sign: '周九', time: '2026-06-26 13:30' }),
+          makeLine('5号线', 252, '合格', { inspector: '王五', sign: '王五', time: '2026-06-26 15:00' }, { inspector: '吴十', sign: '吴十', time: '2026-06-26 17:25' })
         ]
       },
       {
@@ -250,9 +264,11 @@
         treatmentReason: '干化', totalSlaughter: 1185, qualifiedQty: 1185,
         status: 'approved', reviewer: '张三', reviewerSign: '张三', reviewTime: '2026-06-25 17:30',
         lines: [
-          { lineName: '1号线', slaughterQty: 395, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-25 08:50' },
-          { lineName: '2号线', slaughterQty: 400, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-25 11:00' },
-          { lineName: '3号线', slaughterQty: 390, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-25 15:40' }
+          makeLine('1号线', 237, '合格', { inspector: '李四', sign: '李四', time: '2026-06-25 08:50' }, { inspector: '赵六', sign: '赵六', time: '2026-06-25 10:40' }),
+          makeLine('2号线', 237, '合格', { inspector: '李四', sign: '李四', time: '2026-06-25 11:00' }, { inspector: '钱七', sign: '钱七', time: '2026-06-25 13:15' }),
+          makeLine('3号线', 237, '合格', { inspector: '王五', sign: '王五', time: '2026-06-25 15:40' }, { inspector: '孙八', sign: '孙八', time: '2026-06-25 16:55' }),
+          makeLine('4号线', 237, '合格', { inspector: '王五', sign: '王五', time: '2026-06-25 09:20' }, { inspector: '周九', sign: '周九', time: '2026-06-25 14:05' }),
+          makeLine('5号线', 237, '合格', { inspector: '李四', sign: '李四', time: '2026-06-25 12:30' }, { inspector: '吴十', sign: '吴十', time: '2026-06-25 17:10' })
         ]
       },
       {
@@ -260,9 +276,11 @@
         treatmentReason: '干化', totalSlaughter: 1200, qualifiedQty: 1199,
         status: 'approved', reviewer: '张三', reviewerSign: '张三', reviewTime: '2026-06-24 16:45',
         lines: [
-          { lineName: '1号线', slaughterQty: 410, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-24 09:00' },
-          { lineName: '2号线', slaughterQty: 395, inspection: '合格', inspector: '李四', inspectorSign: '李四', registerTime: '2026-06-24 10:15' },
-          { lineName: '3号线', slaughterQty: 395, inspection: '合格', inspector: '王五', inspectorSign: '王五', registerTime: '2026-06-24 13:50' }
+          makeLine('1号线', 240, '合格', { inspector: '王五', sign: '王五', time: '2026-06-24 09:00' }, { inspector: '赵六', sign: '赵六', time: '2026-06-24 11:35' }),
+          makeLine('2号线', 240, '合格', { inspector: '李四', sign: '李四', time: '2026-06-24 10:15' }, { inspector: '钱七', sign: '钱七', time: '2026-06-24 12:50' }),
+          makeLine('3号线', 240, '合格', { inspector: '王五', sign: '王五', time: '2026-06-24 13:50' }, { inspector: '孙八', sign: '孙八', time: '2026-06-24 15:20' }),
+          makeLine('4号线', 240, '合格', { inspector: '李四', sign: '李四', time: '2026-06-24 08:40' }, { inspector: '周九', sign: '周九', time: '2026-06-24 14:30' }),
+          makeLine('5号线', 240, '合格', { inspector: '王五', sign: '王五', time: '2026-06-24 16:00' }, { inspector: '吴十', sign: '吴十', time: '2026-06-24 17:45' })
         ]
       }
     ];
@@ -280,16 +298,37 @@
       return value === '合格' ? tagHtml('合格', 'success') : tagHtml('不合格', 'danger');
     }
 
+    function regCell(reg) {
+      var inspectorName = reg.inspector || '—';
+      var sign = reg.inspectorSign
+        ? '<span class="sign-box">' + reg.inspectorSign + '</span>'
+        : '<span style="color:#c0c4cc">—</span>';
+      return '<td class="text-center">' + inspectorName + '</td>' +
+        '<td class="text-center">' + sign + '</td>' +
+        '<td>' + (reg.registerTime || '—') + '</td>';
+    }
+
     function renderSubTable(lines, date, editing) {
-      let rows = lines.map(function (l) {
+      var rows = '';
+      lines.forEach(function (l) {
+        var regs = l.registrations || [];
+        var rowspan = regs.length || 1;
         var inspCell = inspectionCell(l.inspection || '合格', editing);
-        var inspectorName = l.inspector || '—';
-        var sign = l.inspectorSign ? '<span class="sign-box">' + l.inspectorSign + '</span>' : '<span style="color:#c0c4cc">—</span>';
         var qtyCell = editing
           ? '<input class="input" type="number" value="' + l.slaughterQty + '" style="width:80px;text-align:center" />'
           : l.slaughterQty;
-        return '<tr><td>' + l.lineName + '</td><td class="text-center">' + qtyCell + '</td><td class="text-center">' + inspCell + '</td><td class="text-center">' + inspectorName + '</td><td class="text-center">' + sign + '</td><td>' + l.registerTime + '</td></tr>';
-      }).join('');
+        regs.forEach(function (reg, idx) {
+          if (idx === 0) {
+            rows += '<tr>' +
+              '<td rowspan="' + rowspan + '">' + l.lineName + '</td>' +
+              '<td class="text-center" rowspan="' + rowspan + '">' + qtyCell + '</td>' +
+              '<td class="text-center" rowspan="' + rowspan + '">' + inspCell + '</td>' +
+              regCell(reg) + '</tr>';
+          } else {
+            rows += '<tr>' + regCell(reg) + '</tr>';
+          }
+        });
+      });
       return '<div class="expand-inner"><div class="expand-title">生产线明细 — ' + date + '</div><div class="table-wrap"><table class="sub-table"><thead><tr><th>生产线</th><th class="text-center">各生产线屠宰数量</th><th class="text-center">胴体、内脏检验</th><th class="text-center">检验员</th><th class="text-center">检验员签名</th><th>登记时间</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
     }
 
