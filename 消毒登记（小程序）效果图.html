@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>消毒登记 - 效果图</title>
+  <style>
+    :root {
+      --primary: #00c19d;
+      --primary-dark: #00a888;
+      --bg: #f7f8fa;
+      --text: #323233;
+      --text-secondary: #969799;
+      --border: #ebedf0;
+      --danger: #ee0a24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+      background: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .phone {
+      width: 100%;
+      max-width: 414px;
+      min-height: 100vh;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 24px rgba(0,0,0,.12);
+    }
+
+    .status-bar { height: 20px; background: var(--primary-dark); }
+    .nav-bar {
+      background: var(--primary);
+      color: #fff;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-back { font-size: 22px; width: 36px; cursor: pointer; line-height: 1; }
+    .nav-title { flex: 1; text-align: center; font-size: 17px; font-weight: 500; }
+    .nav-right { width: 36px; text-align: right; font-size: 16px; opacity: .9; letter-spacing: 2px; }
+
+    .form-body { flex: 1; overflow-y: auto; padding-bottom: 88px; }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
+    .cell-label { color: var(--text); flex-shrink: 0; }
+    .cell-label .req { color: var(--danger); margin-right: 2px; }
+    .cell-value {
+      color: var(--text-secondary);
+      text-align: right;
+      flex: 1;
+      margin-left: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .cell-value.readonly { color: var(--text); }
+    .cell-value input {
+      border: none;
+      background: transparent;
+      text-align: right;
+      font-size: 15px;
+      color: var(--text-secondary);
+      width: 100%;
+      outline: none;
+    }
+    .cell-arrow { color: #c8c9cc; font-size: 14px; }
+    .icon-cal { font-size: 16px; opacity: .6; }
+
+    .section-block {
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-label {
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .section-label .req { color: var(--danger); margin-right: 2px; }
+
+    .upload-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .upload-box {
+      width: 80px;
+      height: 80px;
+      border: 1px dashed #dcdee0;
+      border-radius: 4px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .upload-box .plus { font-size: 28px; line-height: 1; color: #c8c9cc; margin-bottom: 4px; }
+    .upload-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #e8f8f5, #d0efe8);
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-thumb::after {
+      content: "现场";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--primary);
+    }
+    .upload-thumb .del {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      background: rgba(0,0,0,.5);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sign-area {
+      min-height: 100px;
+      border: 1px dashed #dcdee0;
+      border-radius: 4px;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .sign-area.filled {
+      font-family: KaiTi, STKaiti, serif;
+      font-size: 28px;
+      color: var(--text);
+      border-style: solid;
+      background: #fff;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 414px;
+      padding: 12px 16px 20px;
+      background: #fff;
+      box-shadow: 0 -2px 10px rgba(0,0,0,.06);
+    }
+    .btn-save {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 22px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-save:active { opacity: .88; }
+
+    .toast {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,.72);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 200;
+    }
+    .toast.show { display: block; }
+
+    .sign-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 150;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .sign-modal.show { display: flex; }
+    .sign-panel {
+      width: 100%;
+      max-width: 414px;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+      padding: 16px;
+    }
+    .sign-panel h3 { font-size: 16px; margin-bottom: 12px; text-align: center; }
+    .sign-canvas {
+      height: 160px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: KaiTi, STKaiti, serif;
+      font-size: 36px;
+      color: #333;
+      cursor: crosshair;
+    }
+    .sign-actions { display: flex; gap: 12px; margin-top: 12px; }
+    .sign-actions button {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .sign-actions .confirm { background: var(--primary); color: #fff; border-color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"></div>
+    <header class="nav-bar">
+      <span class="nav-back" onclick="history.back()">‹</span>
+      <span class="nav-title">消毒登记</span>
+      <span class="nav-right">···</span>
+    </header>
+
+    <div class="form-body">
+      <div class="cell">
+        <span class="cell-label"><span class="req">*</span>清洗日期</span>
+        <span class="cell-value">
+          <input type="date" value="2026-06-08" />
+          <span class="icon-cal">📅</span>
+        </span>
+      </div>
+      <div class="cell">
+        <span class="cell-label"><span class="req">*</span>清洗时间</span>
+        <span class="cell-value">
+          <input type="time" id="cleanTime" step="1" value="12:13:29" />
+        </span>
+      </div>
+      <div class="cell" id="drugCell">
+        <span class="cell-label">消毒药物名称</span>
+        <span class="cell-value">
+          <span id="drugName">过硫酸氢钾复合物</span>
+          <span class="cell-arrow">›</span>
+        </span>
+      </div>
+      <div class="cell">
+        <span class="cell-label">浓度比率</span>
+        <span class="cell-value readonly" id="ratio">1:200</span>
+      </div>
+      <div class="cell">
+        <span class="cell-label">消毒方案</span>
+        <span class="cell-value readonly">喷洗</span>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label"><span class="req">*</span>现场照片（最多3张）</div>
+        <div class="upload-grid" id="uploadGrid">
+          <div class="upload-box" id="uploadBtn">
+            <span class="plus">+</span>
+            <span>上传图片</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-label"><span class="req">*</span>清洗人员签名</div>
+        <div class="sign-area" id="signArea">点击此处签名</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-save" id="btnSave">保存</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">保存成功</div>
+
+  <div class="sign-modal" id="signModal">
+    <div class="sign-panel">
+      <h3>手写签名</h3>
+      <div class="sign-canvas" id="signCanvas">张三</div>
+      <div class="sign-actions">
+        <button type="button" id="signClear">清除</button>
+        <button type="button" class="confirm" id="signConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var photoCount = 0;
+    var signed = false;
+    var drugs = {
+      '过硫酸氢钾复合物': '1:200',
+      '戊二醛': '1:500',
+      '次氯酸钠': '1:100'
+    };
+    var drugKeys = Object.keys(drugs);
+    var drugIndex = 0;
+
+    document.getElementById('drugCell').onclick = function () {
+      drugIndex = (drugIndex + 1) % drugKeys.length;
+      var name = drugKeys[drugIndex];
+      document.getElementById('drugName').textContent = name;
+      document.getElementById('ratio').textContent = drugs[name];
+    };
+
+    document.getElementById('uploadBtn').onclick = function () {
+      if (photoCount >= 3) return;
+      photoCount++;
+      var thumb = document.createElement('div');
+      thumb.className = 'upload-thumb';
+      thumb.innerHTML = '<span class="del">×</span>';
+      thumb.querySelector('.del').onclick = function (e) {
+        e.stopPropagation();
+        thumb.remove();
+        photoCount--;
+        document.getElementById('uploadBtn').style.display = photoCount >= 3 ? 'none' : 'flex';
+      };
+      document.getElementById('uploadGrid').insertBefore(thumb, document.getElementById('uploadBtn'));
+      if (photoCount >= 3) document.getElementById('uploadBtn').style.display = 'none';
+    };
+
+    document.getElementById('signArea').onclick = function () {
+      document.getElementById('signModal').classList.add('show');
+    };
+    document.getElementById('signModal').onclick = function (e) {
+      if (e.target === this) this.classList.remove('show');
+    };
+    document.getElementById('signClear').onclick = function () {
+      document.getElementById('signCanvas').textContent = '';
+    };
+    document.getElementById('signConfirm').onclick = function () {
+      var text = document.getElementById('signCanvas').textContent.trim() || '张三';
+      document.getElementById('signCanvas').textContent = text;
+      var area = document.getElementById('signArea');
+      area.textContent = text;
+      area.classList.add('filled');
+      signed = true;
+      document.getElementById('signModal').classList.remove('show');
+    };
+
+    document.getElementById('btnSave').onclick = function () {
+      if (photoCount < 1) {
+        alert('请上传现场照片');
+        return;
+      }
+      if (!signed) {
+        alert('请完成清洗人员签名');
+        return;
+      }
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 1500);
+    };
+  </script>
+</body>
+</html>

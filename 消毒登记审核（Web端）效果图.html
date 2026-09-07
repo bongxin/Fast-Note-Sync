@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>消毒登记审核 - 效果图</title>
+  <style>
+    :root {
+      --el-color-primary: #409eff;
+      --el-color-success: #67c23a;
+      --el-color-warning: #e6a23c;
+      --el-color-danger: #f56c6c;
+      --el-border: #ebeef5;
+      --el-text: #303133;
+      --el-text-secondary: #606266;
+      --el-bg: #f0f2f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; font-size: 14px; color: var(--el-text); }
+    .layout { display: flex; height: 100%; background: var(--el-bg); }
+
+    .sidebar { width: 210px; background: #001529; color: #bfcbd9; flex-shrink: 0; display: flex; flex-direction: column; }
+    .sidebar.collapsed { width: 64px; }
+    .logo { height: 50px; display: flex; align-items: center; justify-content: center; background: #002140; color: #fff; font-size: 15px; font-weight: 600; overflow: hidden; white-space: nowrap; }
+    .logo span { margin-left: 8px; }
+    .sidebar.collapsed .logo span, .sidebar.collapsed .menu-group-title, .sidebar.collapsed .menu-item .label { display: none; }
+    .menu-group-title { padding: 12px 20px 6px; font-size: 12px; color: #6b7a8d; }
+    .menu-item { display: flex; align-items: center; padding: 0 20px; height: 48px; cursor: pointer; font-size: 14px; }
+    .menu-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .menu-item.active { color: #fff; background: var(--el-color-primary); }
+    .menu-item .icon { width: 20px; margin-right: 10px; text-align: center; }
+    .sidebar.collapsed .menu-item { justify-content: center; padding: 0; }
+    .sidebar.collapsed .menu-item .icon { margin-right: 0; }
+
+    .main-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .navbar { height: 50px; background: #fff; border-bottom: 1px solid #e6e6e6; display: flex; align-items: center; padding: 0 16px; box-shadow: 0 1px 4px rgba(0,21,41,.08); }
+    .hamburger { font-size: 18px; cursor: pointer; margin-right: 16px; color: #5a5e66; user-select: none; }
+    .breadcrumb { flex: 1; color: #97a8be; }
+    .breadcrumb b { color: var(--el-text); font-weight: 500; }
+    .navbar-right { display: flex; align-items: center; gap: 12px; color: #5a5e66; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #409eff, #66b1ff); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+
+    .app-main { flex: 1; padding: 16px; overflow: auto; }
+    .card { background: #fff; border-radius: 4px; padding: 18px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,21,41,.04); }
+    .search-form { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+    .form-item { display: flex; align-items: center; gap: 8px; }
+    .form-item label { color: var(--el-text-secondary); white-space: nowrap; }
+    .input, .select, .textarea {
+      border: 1px solid #dcdfe6; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 14px; color: var(--el-text); outline: none;
+    }
+    .input:focus, .select:focus, .textarea:focus { border-color: var(--el-color-primary); }
+    .input { width: 130px; }
+    .select { min-width: 120px; background: #fff; }
+    .textarea { height: auto; padding: 6px 10px; width: 100%; resize: vertical; min-height: 52px; line-height: 1.5; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 16px; border-radius: 4px; border: 1px solid #dcdfe6; background: #fff; color: var(--el-text); cursor: pointer; font-size: 14px; white-space: nowrap; }
+    .btn:hover { color: var(--el-color-primary); border-color: #c6e2ff; background: #ecf5ff; }
+    .btn-primary { background: var(--el-color-primary); border-color: var(--el-color-primary); color: #fff; }
+    .btn-primary:hover { background: #66b1ff; border-color: #66b1ff; color: #fff; }
+    .btn-success { background: var(--el-color-success); border-color: var(--el-color-success); color: #fff; }
+    .btn-success:hover { background: #85ce61; border-color: #85ce61; color: #fff; }
+    .btn-link { border: none; background: none; color: var(--el-color-primary); padding: 0 4px; height: auto; }
+    .btn-link:hover { background: none; color: #66b1ff; }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .table-title { font-size: 16px; font-weight: 600; }
+    .tag { display: inline-block; padding: 0 9px; height: 24px; line-height: 22px; border-radius: 4px; font-size: 12px; border: 1px solid; }
+    .tag-info { background: #f4f4f5; border-color: #e9e9eb; color: #909399; }
+    .tag-warning { background: #fdf6ec; border-color: #faecd8; color: var(--el-color-warning); }
+    .tag-success { background: #f0f9eb; border-color: #e1f3d8; color: var(--el-color-success); }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--el-border); border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+    th, td { border-bottom: 1px solid var(--el-border); border-right: 1px solid var(--el-border); padding: 10px 12px; text-align: left; font-size: 13px; vertical-align: middle; }
+    th { background: #f5f7fa; color: var(--el-text-secondary); font-weight: 600; white-space: nowrap; }
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f5f7fa; }
+    tbody tr.striped { background: #fafafa; }
+    tbody tr.striped:hover { background: #f5f7fa; }
+    .text-center { text-align: center; }
+
+    .sign-box { display: inline-block; min-width: 72px; height: 32px; border: 1px dashed #dcdfe6; border-radius: 4px; background: #fff; font-family: KaiTi, STKaiti, serif; font-size: 18px; text-align: center; line-height: 30px; padding: 0 8px; }
+
+    .pagination { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 16px; font-size: 13px; color: var(--el-text-secondary); }
+    .page-btn { min-width: 32px; height: 32px; border: none; background: #f4f4f5; border-radius: 4px; cursor: pointer; }
+    .page-btn.active { background: var(--el-color-primary); color: #fff; }
+
+    .mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1000; }
+    .mask.show { display: block; }
+    .drawer { position: fixed; top: 0; right: -500px; width: 480px; max-width: 100%; height: 100%; background: #fff; z-index: 1001; box-shadow: -2px 0 8px rgba(0,0,0,.12); transition: right .3s; display: flex; flex-direction: column; }
+    .drawer.show { right: 0; }
+    .drawer-header { padding: 16px 20px; border-bottom: 1px solid var(--el-border); display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; }
+    .drawer-close { cursor: pointer; font-size: 20px; color: #909399; border: none; background: none; }
+    .drawer-body { flex: 1; overflow: auto; padding: 16px 20px; }
+    .drawer-footer { padding: 12px 20px; border-top: 1px solid var(--el-border); text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+    .section-title { font-size: 14px; font-weight: 600; margin: 8px 0 12px; padding-left: 8px; border-left: 3px solid var(--el-color-primary); }
+    .desc-table { width: 100%; border: 1px solid var(--el-border); border-collapse: collapse; margin-bottom: 16px; }
+    .desc-table th, .desc-table td { border: 1px solid var(--el-border); padding: 10px 12px; font-size: 13px; vertical-align: middle; }
+    .desc-table th { width: 110px; background: #f5f7fa; color: var(--el-text-secondary); font-weight: 500; }
+
+    .photo-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .photo-thumb {
+      width: 64px; height: 64px; border-radius: 4px;
+      background: linear-gradient(135deg, #e8f4ff, #d4e8ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--el-color-primary); cursor: pointer;
+    }
+    .photo-thumb:active { opacity: .85; }
+
+    .dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 420px; max-width: calc(100% - 32px); background: #fff; border-radius: 4px; z-index: 1002; box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+    .dialog.show { display: block; }
+    .dialog-header { padding: 16px 20px; border-bottom: 1px solid var(--el-border); font-weight: 600; }
+    .dialog-body { padding: 20px; }
+    .dialog-footer { padding: 12px 20px; border-top: 1px solid var(--el-border); text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+    .alert-info { background: #f4f4f5; border-radius: 4px; padding: 10px 12px; font-size: 13px; color: var(--el-text-secondary); margin-top: 12px; line-height: 1.6; }
+    .toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #f0f9eb; border: 1px solid #e1f3d8; color: var(--el-color-success); padding: 10px 20px; border-radius: 4px; z-index: 2000; box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+    .toast.show { display: block; }
+
+    .preview-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 3000; align-items: center; justify-content: center; color: #fff; }
+    .preview-mask.show { display: flex; }
+    .preview-box { width: 320px; height: 320px; background: linear-gradient(135deg, #3a7fc9, #409eff); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .preview-close { position: absolute; top: 40px; right: 40px; font-size: 28px; color: #fff; cursor: pointer; border: none; background: none; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">🐷<span>粤海屠宰监管</span></div>
+      <nav class="menu">
+        <div class="menu-group-title">屠宰监管</div>
+        <div class="menu-item"><span class="icon">📋</span><span class="label">巡仓登记审核</span></div>
+        <div class="menu-item"><span class="icon">📦</span><span class="label">留仓记录</span></div>
+        <div class="menu-item"><span class="icon">🔬</span><span class="label">宰后检验登记审核</span></div>
+        <div class="menu-item active"><span class="icon">🧴</span><span class="label">消毒登记审核</span></div>
+      </nav>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="navbar">
+        <span class="hamburger" id="toggleSidebar">☰</span>
+        <div class="breadcrumb">屠宰监管 / <b>消毒登记审核</b></div>
+        <div class="navbar-right"><span>品控部 · 张三</span><div class="avatar">张</div></div>
+      </header>
+
+      <main class="app-main">
+        <div class="card">
+          <div class="search-form">
+            <div class="form-item">
+              <label>日期范围</label>
+              <input class="input" type="date" value="2026-06-23" />
+              <span style="color:#909399">至</span>
+              <input class="input" type="date" value="2026-06-29" />
+            </div>
+            <div class="form-item">
+              <label>消毒药物</label>
+              <select class="select">
+                <option>全部</option>
+                <option>过硫酸氢钾复合物</option>
+                <option>戊二醛</option>
+                <option>次氯酸钠</option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label>审核状态</label>
+              <select class="select">
+                <option>全部</option>
+                <option selected>待审核</option>
+                <option>已通过</option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label>清洗人员</label>
+              <input class="input" type="text" placeholder="姓名" style="width:100px" />
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary">查询</button>
+              <button class="btn">重置</button>
+              <button class="btn btn-success" id="btnExport">导出</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-header">
+            <span class="table-title">消毒登记审核</span>
+            <span class="tag tag-info">近 7 天 · 待审核优先</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>清洗日期</th>
+                  <th class="text-center">清洗时间</th>
+                  <th>消毒药物名称</th>
+                  <th class="text-center">浓度比率</th>
+                  <th class="text-center">消毒方案</th>
+                  <th class="text-center">清洗人员</th>
+                  <th class="text-center">提交时间</th>
+                  <th class="text-center">审核状态</th>
+                  <th class="text-center">审核人</th>
+                  <th class="text-center">审核时间</th>
+                  <th class="text-center" style="width:80px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span id="totalTip">共 5 条</span>
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="mask" id="mask"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <span id="drawerTitle">审核</span>
+      <button class="drawer-close" id="drawerClose">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-footer" id="drawerFooter"></div>
+  </div>
+
+  <div class="dialog" id="exportDialog">
+    <div class="dialog-header">导出清洗消毒记录表</div>
+    <div class="dialog-body">
+      <div class="alert-info" style="margin-top:0">
+        将按当前筛选条件（2026-06-23 至 2026-06-29）导出《清洗消毒记录表》Excel。<br />
+        含序号、清洗日期、清洗时间、消毒药物、浓度比率、消毒方案、清洗人员签名、审核人签名。
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn" id="exportCancel">取消</button>
+      <button class="btn btn-primary" id="exportConfirm">确认导出</button>
+    </div>
+  </div>
+
+  <div class="preview-mask" id="previewMask">
+    <button class="preview-close" id="previewClose">×</button>
+    <div class="preview-box" id="previewBox">现场照片 1/2</div>
+  </div>
+
+  <div class="toast" id="toast">审核成功</div>
+
+  <script>
+    var currentUser = '张三';
+    var currentSign = '张三';
+
+    var data = [
+      { id: 1, cleanDate: '2026-06-29', cleanTime: '12:13:29', drug: '过硫酸氢钾复合物', ratio: '1:200', method: '喷洗', cleaner: '王五', cleanerSign: '王五', submitTime: '2026-06-29 12:15', photos: 2, status: 'pending', auditor: '', auditorSign: '', auditTime: '', opinion: '' },
+      { id: 2, cleanDate: '2026-06-29', cleanTime: '08:30:00', drug: '戊二醛', ratio: '1:500', method: '喷洗', cleaner: '李四', cleanerSign: '李四', submitTime: '2026-06-29 08:32', photos: 3, status: 'pending', auditor: '', auditorSign: '', auditTime: '', opinion: '' },
+      { id: 3, cleanDate: '2026-06-28', cleanTime: '16:45:10', drug: '过硫酸氢钾复合物', ratio: '1:200', method: '喷洗', cleaner: '王五', cleanerSign: '王五', submitTime: '2026-06-28 16:48', photos: 1, status: 'approved', auditor: '张三', auditorSign: '张三', auditTime: '2026-06-28 17:30', opinion: '' },
+      { id: 4, cleanDate: '2026-06-27', cleanTime: '11:20:05', drug: '次氯酸钠', ratio: '1:100', method: '喷洗', cleaner: '张三', cleanerSign: '张三', submitTime: '2026-06-27 11:22', photos: 2, status: 'approved', auditor: '张三', auditorSign: '张三', auditTime: '2026-06-27 16:00', opinion: '现场消毒规范' },
+      { id: 5, cleanDate: '2026-06-26', cleanTime: '14:00:00', drug: '过硫酸氢钾复合物', ratio: '1:200', method: '喷洗', cleaner: '李四', cleanerSign: '李四', submitTime: '2026-06-26 14:03', photos: 2, status: 'approved', auditor: '张三', auditorSign: '张三', auditTime: '2026-06-26 18:10', opinion: '' }
+    ];
+
+    function tagHtml(text, type) {
+      return '<span class="tag tag-' + type + '">' + text + '</span>';
+    }
+
+    function photoGrid(count) {
+      if (!count) return '—';
+      var html = '<div class="photo-grid">';
+      for (var i = 1; i <= count; i++) {
+        html += '<div class="photo-thumb" data-idx="' + i + '" data-total="' + count + '">现场' + i + '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderTable() {
+      document.getElementById('tableBody').innerHTML = data.map(function (row, idx) {
+        var striped = idx % 2 === 1 ? ' striped' : '';
+        var statusTag = row.status === 'pending' ? tagHtml('待审核', 'warning') : tagHtml('已通过', 'success');
+        var actionBtn = row.status === 'pending'
+          ? '<button class="btn btn-link" data-action="audit" data-id="' + row.id + '">审核</button>'
+          : '<button class="btn btn-link" data-action="view" data-id="' + row.id + '">查看</button>';
+        return '<tr class="' + striped.trim() + '">' +
+          '<td>' + row.cleanDate + '</td>' +
+          '<td class="text-center">' + row.cleanTime + '</td>' +
+          '<td>' + row.drug + '</td>' +
+          '<td class="text-center">' + row.ratio + '</td>' +
+          '<td class="text-center">' + row.method + '</td>' +
+          '<td class="text-center">' + row.cleaner + '</td>' +
+          '<td class="text-center">' + row.submitTime + '</td>' +
+          '<td class="text-center">' + statusTag + '</td>' +
+          '<td class="text-center">' + (row.auditor || '—') + '</td>' +
+          '<td class="text-center">' + (row.auditTime || '—') + '</td>' +
+          '<td class="text-center">' + actionBtn + '</td></tr>';
+      }).join('');
+      document.getElementById('totalTip').textContent = '共 ' + data.length + ' 条';
+    }
+
+    function openDrawer(row, mode) {
+      document.getElementById('drawerTitle').textContent = mode === 'audit' ? '审核' : '查看登记详情';
+      var statusTag = row.status === 'pending' ? tagHtml('待审核', 'warning') : tagHtml('已通过', 'success');
+
+      var auditSection = '';
+      if (row.status === 'approved') {
+        auditSection =
+          '<div class="section-title">审核信息</div>' +
+          '<table class="desc-table">' +
+          '<tr><th>审核状态</th><td>' + statusTag + '</td></tr>' +
+          '<tr><th>审核人</th><td>' + row.auditor + '</td></tr>' +
+          '<tr><th>审核人签名</th><td><span class="sign-box">' + row.auditorSign + '</span></td></tr>' +
+          '<tr><th>审核时间</th><td>' + row.auditTime + '</td></tr>' +
+          '<tr><th>审核意见</th><td>' + (row.opinion || '—') + '</td></tr>' +
+          '</table>';
+      } else {
+        auditSection =
+          '<div class="section-title">审核操作</div>' +
+          '<table class="desc-table">' +
+          '<tr><th>审核人</th><td>' + currentUser + '（当前用户）</td></tr>' +
+          '<tr><th>审核人签名</th><td><span class="sign-box">' + currentSign + '</span></td></tr>' +
+          '<tr><th>审核意见</th><td><textarea class="textarea" id="auditOpinion" placeholder="请输入审核意见"></textarea></td></tr>' +
+          '</table>';
+      }
+
+      document.getElementById('drawerBody').innerHTML =
+        '<div class="section-title">登记信息</div>' +
+        '<table class="desc-table">' +
+        '<tr><th>清洗日期</th><td>' + row.cleanDate + '</td></tr>' +
+        '<tr><th>清洗时间</th><td>' + row.cleanTime + '</td></tr>' +
+        '<tr><th>消毒药物名称</th><td>' + row.drug + '</td></tr>' +
+        '<tr><th>浓度比率</th><td>' + row.ratio + '</td></tr>' +
+        '<tr><th>消毒方案</th><td>' + row.method + '</td></tr>' +
+        '<tr><th>现场照片</th><td>' + photoGrid(row.photos) + '</td></tr>' +
+        '<tr><th>清洗人员签名</th><td><span class="sign-box">' + row.cleanerSign + '</span></td></tr>' +
+        '<tr><th>清洗人员</th><td>' + row.cleaner + '</td></tr>' +
+        '<tr><th>提交时间</th><td>' + row.submitTime + '</td></tr>' +
+        '</table>' + auditSection;
+
+      document.getElementById('drawerFooter').innerHTML = mode === 'audit'
+        ? '<button class="btn" id="drawerCancel">取消</button><button class="btn btn-primary" id="drawerApprove" data-id="' + row.id + '">通过</button>'
+        : '';
+
+      document.getElementById('mask').classList.add('show');
+      document.getElementById('drawer').classList.add('show');
+
+      document.getElementById('drawerBody').querySelectorAll('.photo-thumb').forEach(function (el) {
+        el.onclick = function () {
+          document.getElementById('previewBox').textContent =
+            '现场照片 ' + el.getAttribute('data-idx') + '/' + el.getAttribute('data-total');
+          document.getElementById('previewMask').classList.add('show');
+        };
+      });
+    }
+
+    function closeDrawer() {
+      document.getElementById('mask').classList.remove('show');
+      document.getElementById('drawer').classList.remove('show');
+    }
+
+    renderTable();
+
+    document.getElementById('toggleSidebar').onclick = function () {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    };
+
+    document.getElementById('tableBody').addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var id = parseInt(btn.getAttribute('data-id'), 10);
+      var row = data.find(function (r) { return r.id === id; });
+      openDrawer(row, btn.getAttribute('data-action'));
+    });
+
+    document.getElementById('drawerClose').onclick = closeDrawer;
+    document.getElementById('mask').onclick = function (e) {
+      if (e.target.id === 'mask') {
+        closeDrawer();
+        document.getElementById('exportDialog').classList.remove('show');
+      }
+    };
+
+    document.body.addEventListener('click', function (e) {
+      if (e.target.id === 'drawerCancel') closeDrawer();
+      if (e.target.id === 'drawerApprove') {
+        var id = parseInt(e.target.getAttribute('data-id'), 10);
+        var row = data.find(function (r) { return r.id === id; });
+        var opinionEl = document.getElementById('auditOpinion');
+        row.status = 'approved';
+        row.auditor = currentUser;
+        row.auditorSign = currentSign;
+        row.auditTime = '2026-06-29 18:00';
+        row.opinion = opinionEl ? opinionEl.value.trim() : '';
+        renderTable();
+        closeDrawer();
+        document.getElementById('toast').classList.add('show');
+        setTimeout(function () { document.getElementById('toast').classList.remove('show'); }, 2000);
+      }
+    });
+
+    document.getElementById('btnExport').onclick = function () {
+      document.getElementById('mask').classList.add('show');
+      document.getElementById('exportDialog').classList.add('show');
+    };
+    document.getElementById('exportCancel').onclick = function () {
+      document.getElementById('mask').classList.remove('show');
+      document.getElementById('exportDialog').classList.remove('show');
+    };
+    document.getElementById('exportConfirm').onclick = function () {
+      document.getElementById('mask').classList.remove('show');
+      document.getElementById('exportDialog').classList.remove('show');
+      alert('已触发导出（效果图演示）\n清洗消毒记录表_2026年06月23日-2026年06月29日.xlsx');
+    };
+
+    document.getElementById('previewClose').onclick = function () {
+      document.getElementById('previewMask').classList.remove('show');
+    };
+    document.getElementById('previewMask').onclick = function (e) {
+      if (e.target === this) this.classList.remove('show');
+    };
+  </script>
+</body>
+</html>
